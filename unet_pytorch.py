@@ -125,7 +125,8 @@ class UNet(nn.Module):
         self.first_block.evaluate()
 
         # Batch should be in NCHW format
-        myImg = torch.tensor([1, 3, 4, 4], dtype=torch.float32)
+        input = np.zeros((1, 3, 4, 4))
+        myImg = torch.tensor(input, dtype=torch.float32)
 
         yTorch = self.first_block.forward(myImg)
         ypyTorch = self.forward(myImg)
