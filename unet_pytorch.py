@@ -23,16 +23,19 @@ class UNet(nn.Module):
 
         self.relu64_64 = nn.ReLU(inplace=True)
         self.pool_64 = nn.MaxPool2d(2, 2)
-        #
-        # self.conv64_128 = nn.Conv2d(64, 128, 3, 1, 1)
-        # self.bn64_128 = nn.BatchNorm2d(128, track_running_stats=False)
-        # self.relu64_128 = nn.ReLU(inplace=True)
-        # self.conv128_128 = nn.Conv2d(128, 128, 3, 1, 1)
-        # self.bn128_128 = nn.BatchNorm2d(128, track_running_stats=False)
-        # self.relu128_128 = nn.ReLU(inplace=True)
-        #
-        # self.pool_128 = nn.MaxPool2d(2, 2)
-        #
+
+        self.conv64_128 = nn.Conv2d(64, 128, 3, 1, 1)
+        self.bn64_128 = nn.BatchNorm2d(128, track_running_stats=True)
+        self.bn64_128.training = False
+
+        self.relu64_128 = nn.ReLU(inplace=True)
+        self.conv128_128 = nn.Conv2d(128, 128, 3, 1, 1)
+        self.bn128_128 = nn.BatchNorm2d(128, track_running_stats=True)
+        self.bn128_128.training = False
+
+        self.relu128_128 = nn.ReLU(inplace=True)
+        self.pool_128 = nn.MaxPool2d(2, 2)
+
         # self.conv128_256 = nn.Conv2d(128, 256, 3, 1, 1)
         # self.bn128_256 = nn.BatchNorm2d(256, track_running_stats=False)
         # self.relu128_256 = nn.ReLU(inplace=True)
@@ -119,9 +122,15 @@ class UNet(nn.Module):
 
         self.copy_conv_layer(self.conv3_64, self.first_block.get(0))
         self.copy_bn_layer(self.bn3_64, self.first_block.get(1))
-
         self.copy_conv_layer(self.conv64_64, self.first_block.get(3))
         self.copy_bn_layer(self.bn64_64, self.first_block.get(4))
+
+        self.second_block = self.lua_unet.get(1).get(1).get(1)
+
+        self.copy_conv_layer(self.conv64_128, self.second_block.get(0))
+        self.copy_bn_layer(self.bn64_128, self.second_block.get(1))
+        self.copy_conv_layer(self.conv128_128, self.second_block.get(3))
+        self.copy_bn_layer(self.bn128_128, self.second_block.get(4))
 
         print('Have copied the weights of the first block')
 
@@ -132,6 +141,9 @@ class UNet(nn.Module):
         myImg = torch.tensor(input, dtype=torch.float32)
 
         yTorch = self.first_block.forward(myImg)
+        yTorch = self.pool_64(yTorch)
+        yTorch = self.second_block.forward(yTorch)
+
         ypyTorch = self.forward(myImg)
 
         print('DIFF {}'.format(np.sum(yTorch.detach().numpy() - ypyTorch.detach().numpy())))
@@ -144,5 +156,14 @@ class UNet(nn.Module):
         out = self.conv64_64(out)
         out = self.bn64_64(out)
         out = self.relu64_64(out)
+
+        out = self.pool_64(out)
+
+        out = self.conv64_128(x)
+        out = self.bn64_128(out)
+        out = self.relu64_128(out)
+        out = self.conv128_128(out)
+        out = self.bn128_128(out)
+        out = self.relu128_128(out)
 
         return out
