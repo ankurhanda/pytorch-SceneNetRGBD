@@ -159,7 +159,7 @@ class UNet(nn.Module):
 
         out = self.pool_64(out)
 
-        out = self.conv64_128(x)
+        out = self.conv64_128(out)
         out = self.bn64_128(out)
         out = self.relu64_128(out)
         out = self.conv128_128(out)
