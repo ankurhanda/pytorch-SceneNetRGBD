@@ -13,13 +13,13 @@ class UNet(nn.Module):
 
         self.conv3_64 = nn.Conv2d(3, 64, 3, 1, 1)
         self.bn3_64 = nn.BatchNorm2d(64, track_running_stats=True)
-        self.bn3_64.train = False
+        self.bn3_64.training = False
 
         self.relu3_64 = nn.ReLU(inplace=True)
 
         self.conv64_64 = nn.Conv2d(64, 64, 3, 1, 1)
         self.bn64_64 = nn.BatchNorm2d(64, track_running_stats=True)
-        self.bn64_64.train = False
+        self.bn64_64.training = False
 
         self.relu64_64 = nn.ReLU(inplace=True)
         self.pool_64 = nn.MaxPool2d(2, 2)
