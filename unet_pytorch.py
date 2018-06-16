@@ -113,6 +113,7 @@ class UNet(nn.Module):
         # SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model2.t7
 
         self.lua_unet = load_lua(lua_model_t7)
+        self.lua_unet.evaluate()
 
         self.first_block = self.lua_unet.get(0)
 
@@ -125,8 +126,6 @@ class UNet(nn.Module):
         print('Have copied the weights of the first block')
 
     def run_torch_pytorch_import_test(self):
-
-        self.first_block.evaluate()
 
         # Batch should be in NCHW format
         input = np.zeros((1, 3, 4, 4))
