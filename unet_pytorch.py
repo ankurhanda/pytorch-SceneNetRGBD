@@ -8,7 +8,7 @@ import os
 
 
 class UNet(nn.Module):
-    def __init__(self, n_channels, n_classes):
+    def __init__(self):
         super(UNet, self).__init__()
 
         self.conv3_64 = nn.Conv2d(3, 64, 3, 1, 1)
@@ -16,7 +16,7 @@ class UNet(nn.Module):
         self.relu3_64 = nn.ReLU(inplace=True)
         self.conv64_64 = nn.Conv2d(64, 64, 3, 1, 1)
         self.bn64_64 = nn.BatchNorm2d(64, track_running_stats=False)
-        self.relu3_64 = nn.ReLU(inplace=True)
+        self.relu64_64 = nn.ReLU(inplace=True)
 
         self.pool_64 = nn.MaxPool2d(2, 2)
 
@@ -91,19 +91,43 @@ class UNet(nn.Module):
 
         self.output = nn.Conv2d(64, 14, 3, 1, 1)
 
+
+    def copy_bn_layer(self, pytorch_bn_layer, torch_bn_layer):
+
+        pytorch_bn_layer.weight = torch_bn_layer.weight
+        pytorch_bn_layer.bias = torch_bn_layer.bias
+        pytorch_bn_layer.running_mean = torch_bn_layer.running_mean
+        pytorch_bn_layer.running_var = torch_bn_layer.running_var
+
+    def copy_conv_layer(self, pytorch_conv_layer, torch_conv_layer):
+
+        pytorch_conv_layer.weight = torch_conv_layer.weight
+        pytorch_conv_layer.bias   = torch_conv_layer.bias
+
     def copy_weights(self, lua_model_t7):
 
-        lua_unet = lua_load(lua_model_t7)
+        # SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model2.t7
+
+        lua_unet = load_lua(lua_model_t7)
+
+        first_block = lua_unet.get(0)
+
+        copy_conv_layer(self.conv3_64, first_block.get(0))
+        copy_bn_layer(self.bn3_64, first_block.get(1))
+
+        copy_conv_layer(self.conv64_64, first_block.get(3))
+        copy_bn_layer(self.bn64_64, first_block.get(4))
+
+        print('Have copied the weights of the first block')
+
 
     def forward(self, x):
-        x1 = self.inc(x)
-        x2 = self.down1(x1)
-        x3 = self.down2(x2)
-        x4 = self.down3(x3)
-        x5 = self.down4(x4)
-        x = self.up1(x5, x4)
-        x = self.up2(x, x3)
-        x = self.up3(x, x2)
-        x = self.up4(x, x1)
-        x = self.outc(x)
-        return x
+
+        out = self.conv3_64(x)
+        out = self.bn3_64(out)
+        out = self.relu3_64(out)
+        out = self.conv64_64(out)
+        out = self.bn64_64(out)
+        out = self.relu64_64(out)
+
+        return out
