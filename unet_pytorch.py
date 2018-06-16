@@ -110,13 +110,13 @@ class UNet(nn.Module):
 
         self.lua_unet = load_lua(lua_model_t7)
 
-        self.first_block = lua_unet.get(0)
+        self.first_block = self.lua_unet.get(0)
 
-        copy_conv_layer(self.conv3_64, self.first_block.get(0))
-        copy_bn_layer(self.bn3_64, self.first_block.get(1))
+        self.copy_conv_layer(self.conv3_64, self.first_block.get(0))
+        self.copy_bn_layer(self.bn3_64, self.first_block.get(1))
 
-        copy_conv_layer(self.conv64_64, self.first_block.get(3))
-        copy_bn_layer(self.bn64_64, self.first_block.get(4))
+        self.copy_conv_layer(self.conv64_64, self.first_block.get(3))
+        self.copy_bn_layer(self.bn64_64, self.first_block.get(4))
 
         print('Have copied the weights of the first block')
 
