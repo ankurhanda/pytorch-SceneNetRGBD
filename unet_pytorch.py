@@ -94,32 +94,43 @@ class UNet(nn.Module):
 
     def copy_bn_layer(self, pytorch_bn_layer, torch_bn_layer):
 
-        pytorch_bn_layer.weight = torch_bn_layer.weight
-        pytorch_bn_layer.bias = torch_bn_layer.bias
-        pytorch_bn_layer.running_mean = torch_bn_layer.running_mean
-        pytorch_bn_layer.running_var = torch_bn_layer.running_var
+        pytorch_bn_layer.weight.data.copy_(torch_bn_layer.weight)
+        pytorch_bn_layer.bias.data.copy_(torch_bn_layer.bias)
+        pytorch_bn_layer.running_mean.data.copy_(torch_bn_layer.running_mean)
+        pytorch_bn_layer.running_var.data.copy_(torch_bn_layer.running_var)
 
     def copy_conv_layer(self, pytorch_conv_layer, torch_conv_layer):
 
-        pytorch_conv_layer.weight = torch_conv_layer.weight
-        pytorch_conv_layer.bias   = torch_conv_layer.bias
+        pytorch_conv_layer.weight.data.copy_(torch_conv_layer.weight)
+        pytorch_conv_layer.bias.data.copy_(torch_conv_layer.bias)
 
     def copy_weights(self, lua_model_t7):
 
         # SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model2.t7
 
-        lua_unet = load_lua(lua_model_t7)
+        self.lua_unet = load_lua(lua_model_t7)
 
-        first_block = lua_unet.get(0)
+        self.first_block = lua_unet.get(0)
 
-        copy_conv_layer(self.conv3_64, first_block.get(0))
-        copy_bn_layer(self.bn3_64, first_block.get(1))
+        copy_conv_layer(self.conv3_64, self.first_block.get(0))
+        copy_bn_layer(self.bn3_64, self.first_block.get(1))
 
-        copy_conv_layer(self.conv64_64, first_block.get(3))
-        copy_bn_layer(self.bn64_64, first_block.get(4))
+        copy_conv_layer(self.conv64_64, self.first_block.get(3))
+        copy_bn_layer(self.bn64_64, self.first_block.get(4))
 
         print('Have copied the weights of the first block')
 
+    def run_torch_pytorch_import_test(self):
+
+        self.first_block.evaluate()
+
+        # Batch should be in NCHW format
+        myImg = torch.tensor([1, 3, 4, 4], dtype=torch.float32)
+
+        yTorch = self.first_block.forward(myImg)
+        ypyTorch = self.forward(myImg)
+
+        print('DIFF {}'.format(np.sum(yTorch.detach().numpy() - ypyTorch.detach().numpy())))
 
     def forward(self, x):
 
