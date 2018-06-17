@@ -263,7 +263,7 @@ class UNet(nn.Module):
         yTorch = self.ninth_block.forward(yTorch)
         # yTorch = self.up64(yTorch)
 
-        # yTorch = self.tenth_block.forward(yTorch)
+        yTorch = self.tenth_block.forward(yTorch)
 
         print('yTorch shape = ', yTorch.detach().numpy().shape)
 
@@ -349,8 +349,6 @@ class UNet(nn.Module):
         out = self.bn64_64_ucat(out)
         out = self.relu64_64_u(out)
 
-        # out = self.up64(out)
-
-        # out = self.conv_out_64(out)
+        out = self.conv_out_64(out)
 
         return out
