@@ -240,31 +240,33 @@ class UNet(nn.Module):
 
         myImg = torch.tensor(input, dtype=torch.float32)
 
-        yTorch64 = self.first_block.forward(myImg)
-        yTorch = self.pool_64(yTorch64)
-        yTorch128 = self.second_block.forward(yTorch)
-        yTorch = self.pool_128(yTorch128)
-        yTorch256 = self.third_block.forward(yTorch)
-        yTorch = self.pool_256(yTorch256)
-        yTorch512 = self.fourth_block.forward(yTorch)
-        yTorch = self.fifth_block.forward(yTorch512)
+        yTorch = self.lua_unet.forward(myImg)
 
-        yTorch = torch.cat([yTorch512, yTorch], dim=1)
-        yTorch = self.sixth_block.forward(yTorch)
-        yTorch = self.up512(yTorch)
-
-        yTorch = torch.cat([yTorch256, yTorch], dim=1)
-        yTorch = self.seventh_block.forward(yTorch)
-        yTorch = self.up256(yTorch)
-
-        yTorch = torch.cat([yTorch128, yTorch], dim=1)
-        yTorch = self.eigth_block.forward(yTorch)
-        yTorch = self.up128(yTorch)
-
-        yTorch = torch.cat([yTorch64, yTorch], dim=1)
-        yTorch = self.ninth_block.forward(yTorch)
-
-        yTorch = self.tenth_block.forward(yTorch)
+        # yTorch64 = self.first_block.forward(myImg)
+        # yTorch = self.pool_64(yTorch64)
+        # yTorch128 = self.second_block.forward(yTorch)
+        # yTorch = self.pool_128(yTorch128)
+        # yTorch256 = self.third_block.forward(yTorch)
+        # yTorch = self.pool_256(yTorch256)
+        # yTorch512 = self.fourth_block.forward(yTorch)
+        # yTorch = self.fifth_block.forward(yTorch512)
+        #
+        # yTorch = torch.cat([yTorch512, yTorch], dim=1)
+        # yTorch = self.sixth_block.forward(yTorch)
+        # yTorch = self.up512(yTorch)
+        #
+        # yTorch = torch.cat([yTorch256, yTorch], dim=1)
+        # yTorch = self.seventh_block.forward(yTorch)
+        # yTorch = self.up256(yTorch)
+        #
+        # yTorch = torch.cat([yTorch128, yTorch], dim=1)
+        # yTorch = self.eigth_block.forward(yTorch)
+        # yTorch = self.up128(yTorch)
+        #
+        # yTorch = torch.cat([yTorch64, yTorch], dim=1)
+        # yTorch = self.ninth_block.forward(yTorch)
+        #
+        # yTorch = self.tenth_block.forward(yTorch)
 
         print('yTorch shape = ', yTorch.detach().numpy().shape)
 
