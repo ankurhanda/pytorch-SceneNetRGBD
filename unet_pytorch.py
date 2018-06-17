@@ -280,9 +280,9 @@ class UNet(nn.Module):
         out = self.relu3_64(out)
         out = self.conv64_64(out)
         out = self.bn64_64(out)
-        out = self.relu64_64(out)
+        out_relu64 = self.relu64_64(out)
 
-        out = self.pool_64(out)
+        out = self.pool_64(out_relu64)
 
         out = self.conv64_128(out)
         out = self.bn64_128(out)
@@ -333,9 +333,18 @@ class UNet(nn.Module):
         out = self.up128(out)
 
         out = torch.cat([out_relu128, out], dim=1)
+        out = self.conv256_128_u(out)
+        out = self.bn256_128_u(out)
+        out = self.relu256_128_u(out)
         out = self.conv128_64_u(out)
         out = self.bn128_64_u(out)
         out = self.relu128_64_u(out)
+        out = self.up64(out)
+
+        out = torch.cat([out_relu64, out], dim=1)
+        out = self.conv128_64_ucat(out)
+        out = self.bn128_64_ucat(out)
+        out = self.relu128_64_ucat(out)
         out = self.conv64_64_ucat(out)
         out = self.bn64_64_ucat(out)
         out = self.relu64_64_u(out)
