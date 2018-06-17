@@ -123,12 +123,12 @@ class UNet(nn.Module):
 
 
         self.conv128_64_ucat = nn.Conv2d(128, 64, 3, 1, 1)
-        self.bn128_64_ucat = nn.BatchNorm2d(64, track_running_states=True)
+        self.bn128_64_ucat = nn.BatchNorm2d(64, track_running_stats=True)
         self.bn128_64_ucat.training = False
 
         self.relu128_64_ucat = nn.ReLU(inplace=False)
         self.conv64_64_ucat = nn.Conv2d(64, 64, 3, 1, 1)
-        self.bn64_64_ucat = nn.BatchNorm2d(64, track_running_states=True)
+        self.bn64_64_ucat = nn.BatchNorm2d(64, track_running_stats=True)
         self.bn64_64_ucat.training = False
 
         self.relu64_64_u = nn.ReLU(inplace=True)
