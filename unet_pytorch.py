@@ -235,7 +235,9 @@ class UNet(nn.Module):
     def run_torch_pytorch_import_test(self):
 
         # Batch should be in NCHW format
-        input = np.ones((1, 3, 128, 128))
+        # input = np.ones((1, 3, 128, 128))
+        input = np.random.rand(1, 3, 128, 128)
+
         myImg = torch.tensor(input, dtype=torch.float32)
 
         yTorch64 = self.first_block.forward(myImg)
@@ -261,7 +263,6 @@ class UNet(nn.Module):
 
         yTorch = torch.cat([yTorch64, yTorch], dim=1)
         yTorch = self.ninth_block.forward(yTorch)
-        # yTorch = self.up64(yTorch)
 
         yTorch = self.tenth_block.forward(yTorch)
 
