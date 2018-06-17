@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.serialization import load_lua
-# lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model.t7')
+lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model.t7')
 
 from PIL import Image
 import numpy as np
@@ -133,7 +133,7 @@ class UNet(nn.Module):
 
         self.relu64_64_u = nn.ReLU(inplace=True)
 
-        self.conv_out_64 = nn.Conv2d(64, 14, 3, 1, 1)
+        self.conv_out_64 = nn.Conv2d(64, 14, 1, 1, 1)
 
 
     def copy_bn_layer(self, pytorch_bn_layer, torch_bn_layer):
