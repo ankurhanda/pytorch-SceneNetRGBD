@@ -230,9 +230,11 @@ class UNet(nn.Module):
         yTorch = self.pool_128(yTorch)
         yTorch = self.third_block.forward(yTorch)
         yTorch = self.pool_256(yTorch)
-        yTorch = self.fourth_block.forward(yTorch)
-        yTorch = self.fifth_block.forward(yTorch)
-        yTorch = self.up512(yTorch)
+        yTorch512 = self.fourth_block.forward(yTorch)
+        yTorch = self.fifth_block.forward(yTorch512)
+
+        yTorch = torch.cat([yTorch512, yTorch], dim=1)
+
         yTorch = self.sixth_block.forward(yTorch)
 
         print('yTorch shape = ', yTorch.detach().numpy().shape)
