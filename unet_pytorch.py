@@ -220,6 +220,7 @@ class UNet(nn.Module):
         self.copy_bn_layer(self.bn512_256_u, self.sixth_block.get(4))
 
         self.seventh_block = self.lua_unet.get(1).get(1).get(2).get(1).get(4)
+        print(self.seventh_block)
         self.copy_conv_layer(self.conv512_256_catu, self.seventh_block.get(0))
         self.copy_bn_layer(self.bn512_256_catu, self.seventh_block.get(1))
         self.copy_conv_layer(self.conv256_128_catu, self.seventh_block.get(3))
@@ -228,11 +229,11 @@ class UNet(nn.Module):
         # block = unet:get(2):get(2):get(5)
         # save_conv_unet_block(block)
 
-        self.eigth_block = self.lua_unet.get(1).get(1).get(4)
-        self.copy_conv_layer(self.conv256_128_u, self.seventh_block.get(0))
-        self.copy_bn_layer(self.bn256_128_u, self.seventh_block.get(1))
-        self.copy_conv_layer(self.conv128_64_u, self.seventh_block.get(3))
-        self.copy_bn_layer(self.bn128_64_u, self.seventh_block.get(4))
+        # self.eigth_block = self.lua_unet.get(1).get(1).get(4)
+        # self.copy_conv_layer(self.conv256_128_u, self.eigth_block.get(0))
+        # self.copy_bn_layer(self.bn256_128_u, self.eigth_block.get(1))
+        # self.copy_conv_layer(self.conv128_64_u, self.eigth_block.get(3))
+        # self.copy_bn_layer(self.bn128_64_u, self.eigth_block.get(4))
 
         # block = unet:get(4)
         # save_conv_unet_block(block)
@@ -258,11 +259,10 @@ class UNet(nn.Module):
         yTorch = self.fifth_block.forward(yTorch512)
 
         yTorch = torch.cat([yTorch512, yTorch], dim=1)
-
         yTorch = self.sixth_block.forward(yTorch)
+        yTorch = self.up512(yTorch)
 
         yTorch = torch.cat([yTorch256, yTorch], dim=1)
-
         yTorch = self.seventh_block(yTorch)
 
         print('yTorch shape = ', yTorch.detach().numpy().shape)
