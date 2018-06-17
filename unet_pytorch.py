@@ -264,7 +264,7 @@ class UNet(nn.Module):
         yTorch = self.up512(yTorch)
 
         yTorch = torch.cat([yTorch256, yTorch], dim=1)
-        yTorch = self.seventh_block(yTorch)
+        yTorch = self.seventh_block.forward(yTorch)
 
         print('yTorch shape = ', yTorch.detach().numpy().shape)
 
