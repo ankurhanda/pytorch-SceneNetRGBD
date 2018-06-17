@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.serialization import load_lua
-lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model.t7')
+# lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model.t7')
 
 from PIL import Image
 import numpy as np
@@ -247,7 +247,7 @@ class UNet(nn.Module):
     def run_torch_pytorch_import_test(self):
 
         # Batch should be in NCHW format
-        input = np.zeros((1, 3, 128, 128))
+        input = np.ones((1, 3, 128, 128))
         myImg = torch.tensor(input, dtype=torch.float32)
 
         yTorch = self.first_block.forward(myImg)
