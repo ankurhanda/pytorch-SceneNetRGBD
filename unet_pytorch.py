@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 from torch.utils.serialization import load_lua
+
+lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model.t7')
+
 from PIL import Image
 import numpy as np
 import cv2
@@ -24,6 +27,9 @@ class UNet(nn.Module):
         self.relu64_64 = nn.ReLU(inplace=True)
         self.pool_64 = nn.MaxPool2d(2, 2)
 
+
+
+
         self.conv64_128 = nn.Conv2d(64, 128, 3, 1, 1)
         self.bn64_128 = nn.BatchNorm2d(128, track_running_stats=True)
         self.bn64_128.training = False
@@ -36,6 +42,9 @@ class UNet(nn.Module):
 
         self.relu128_128 = nn.ReLU(inplace=True)
         self.pool_128 = nn.MaxPool2d(2, 2)
+
+
+
 
         self.conv128_256 = nn.Conv2d(128, 256, 3, 1, 1)
         self.bn128_256 = nn.BatchNorm2d(256, track_running_stats=True)
@@ -50,6 +59,8 @@ class UNet(nn.Module):
         self.relu256_256 = nn.ReLU(inplace=True)
         self.pool_256 = nn.MaxPool2d(2, 2)
 
+
+
         self.conv256_512 = nn.Conv2d(256, 512, 3, 1, 1)
         self.bn256_512 = nn.BatchNorm2d(512, track_running_stats=True)
         self.bn256_512.training = False
@@ -62,6 +73,9 @@ class UNet(nn.Module):
 
         self.relu512_512 = nn.ReLU(inplace=True)
         self.pool_512 = nn.MaxPool2d(2, 2)
+
+
+
 
         self.conv512_1024 = nn.Conv2d(512, 1024, 3, 1, 1)
         self.conv1024_512 = nn.Conv2d(1024, 512, 3, 1, 1)
@@ -191,8 +205,6 @@ class UNet(nn.Module):
         self.copy_bn_layer(self.bn512_512, self.fourth_block.get(4))
 
 
-
-
         print('Have copied the weights of the first block')
 
     def run_torch_pytorch_import_test(self):
@@ -204,8 +216,17 @@ class UNet(nn.Module):
         yTorch = self.first_block.forward(myImg)
         yTorch = self.pool_64(yTorch)
         yTorch = self.second_block.forward(yTorch)
+        yTorch = self.pool_128(yTorch)
+        yTorch = self.third_block.forward(yTorch)
+        yTorch = self.pool_256(yTorch)
+        yTorch = self.fourth_block.forward(yTorch)
+        # yTorch = self.pool_512(yTorch)
+
+        print('yTorch shape = ', yTorch.detach().numpy().shape)
 
         ypyTorch = self.forward(myImg)
+
+        print('ypTorch shape = ', ypyTorch.detach().numpy().shape)
 
         print('DIFF {}'.format(np.sum(yTorch.detach().numpy() - ypyTorch.detach().numpy())))
 
@@ -243,7 +264,7 @@ class UNet(nn.Module):
         out = self.relu256_512(out)
         out = self.conv512_512(out)
         out = self.bn512_512(out)
-        out = self.relu256_512(out)
+        out = self.relu512_512(out)
         
 
         return out
