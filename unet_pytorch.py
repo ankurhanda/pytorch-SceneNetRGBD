@@ -217,10 +217,10 @@ class UNet(nn.Module):
         # save_conv_unet_block(block)
 
         self.ninth_block = self.lua_unet.get(3)
-        self.copy_conv_layer(self.conv128_64_ucat, self.eigth_block.get(0))
-        self.copy_bn_layer(self.bn128_64_ucat, self.eigth_block.get(1))
-        self.copy_conv_layer(self.conv64_64_ucat, self.eigth_block.get(3))
-        self.copy_bn_layer(self.bn64_64_ucat, self.eigth_block.get(4))
+        self.copy_conv_layer(self.conv128_64_ucat, self.ninth_block.get(0))
+        self.copy_bn_layer(self.bn128_64_ucat, self.ninth_block.get(1))
+        self.copy_conv_layer(self.conv64_64_ucat, self.ninth_block.get(3))
+        self.copy_bn_layer(self.bn64_64_ucat, self.ninth_block.get(4))
 
         # block = unet:get(5)
         # save_conv(block)
