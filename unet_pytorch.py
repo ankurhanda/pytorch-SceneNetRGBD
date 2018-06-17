@@ -80,13 +80,13 @@ class UNet(nn.Module):
         # self.concat1024 = torch.cat([self.up512, self.relu512_512], dim=1)
 
         self.conv1024_512_u = nn.Conv2d(1024, 512, 3, 1, 1)
-        self.bn1024_512_u = nn.BatchNorm2d(512, track_running_states=True)
+        self.bn1024_512_u = nn.BatchNorm2d(512, track_running_stats=True)
         self.bn1024_512_u.training = False
 
         self.relu1024_512_u = nn.ReLU(inplace=False)
         self.conv512_256_u = nn.Conv2d(512, 256, 3, 1, 1)
 
-        self.bn512_256_u = nn.BatchNorm2d(256, track_running_states=True)
+        self.bn512_256_u = nn.BatchNorm2d(256, track_running_stats=True)
         self.bn512_256_u.training = False
 
         self.relu512_256_u = nn.ReLU(inplace=True)
