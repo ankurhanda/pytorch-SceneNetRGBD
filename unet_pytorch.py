@@ -349,6 +349,8 @@ class UNet(nn.Module):
         out = self.bn64_64_ucat(out)
         out = self.relu64_64_u(out)
 
+        out = self.up64(out)
+
         out = self.conv_out_64(out)
 
         return out
