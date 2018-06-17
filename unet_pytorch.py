@@ -226,7 +226,7 @@ class UNet(nn.Module):
         # save_conv(block)
 
         self.tenth_block = self.lua_unet.get(4)
-        self.copy_conv_layer(self.conv_out_64, self.tenth_block.get(0))
+        self.copy_conv_layer(self.conv_out_64, self.tenth_block)
 
 
 
