@@ -94,26 +94,30 @@ class UNet(nn.Module):
 
         # self.concat512 = torch.cat([self.relu256_256, self.up256])
 
-        # self.conv512_256_u = nn.Conv2d(512, 256, 3, 1, 1)
-        # self.bn512_256_u = nn.BatchNorm2d(256, track_running_states=False)
-        # self.relu512_256_u = nn.ReLU(inplace=False)
-        # self.conv512_256_u = nn.Conv2d(256, 128, 3, 1, 1)
-        # self.bn512_512_u = nn.BatchNorm2d(128, track_running_states=False)
-        # self.relu512_256_u = nn.ReLU(inplace=True)
-        # self.up128 = nn.Upsample(scale_factor=2, mode='nearest')
-        #
-        # # self.concat256 = torch.cat([self.relu128_128, self.up128])
-        #
-        # self.conv256_128_u = nn.Conv2d(256, 128, 3, 1, 1)
-        # self.bn256_128_u = nn.BatchNorm2d(128, track_running_states=False)
-        # self.relu256_128_u = nn.ReLU(inplace=False)
-        # self.conv256_128_u = nn.Conv2d(128, 64, 3, 1, 1)
-        # self.bn256_128_u = nn.BatchNorm2d(64, track_running_states=False)
-        # self.relu256_128_u = nn.ReLU(inplace=True)
-        # self.up64 = nn.Upsample(scale_factor=2, mode='nearest')
-        #
-        # # self.concat128 = torch.cat([self.relu3_64, self.up64])
-        #
+        self.conv512_256_catu = nn.Conv2d(512, 256, 3, 1, 1)
+        self.bn512_256_catu = nn.BatchNorm2d(256, track_running_stats=False)
+        self.bn512_256_catu.training = False
+
+        self.relu512_256_catu = nn.ReLU(inplace=True)
+        self.conv256_128_catu = nn.Conv2d(256, 128, 3, 1, 1)
+        self.bn256_128_catu = nn.BatchNorm2d(128, track_running_stats=False)
+        self.bn256_128_catu.training = False
+
+        self.relu256_128_catu = nn.ReLU(inplace=True)
+        self.up128 = nn.Upsample(scale_factor=2, mode='nearest')
+
+        self.conv256_128_u = nn.Conv2d(256, 128, 3, 1, 1)
+        self.bn256_128_u = nn.BatchNorm2d(128, track_running_stats=True)
+        self.bn256_128_u.training = False
+
+        self.relu256_128_u = nn.ReLU(inplace=True)
+        self.conv128_64_u = nn.Conv2d(128, 64, 3, 1, 1)
+        self.bn128_64_u = nn.BatchNorm2d(64, track_running_stats=True)
+        self.bn128_64_u.training = False
+
+        self.relu128_64_u = nn.ReLU(inplace=True)
+        self.up64 = nn.Upsample(scale_factor=2, mode='nearest')
+
         # self.conv256_128_u = nn.Conv2d(128, 64, 3, 1, 1)
         # self.bn256_128_u = nn.BatchNorm2d(64, track_running_states=False)
         # self.relu256_128_u = nn.ReLU(inplace=False)
@@ -215,6 +219,26 @@ class UNet(nn.Module):
         self.copy_conv_layer(self.conv512_256_u, self.sixth_block.get(3))
         self.copy_bn_layer(self.bn512_256_u, self.sixth_block.get(4))
 
+        self.seventh_block = self.lua_unet.get(1).get(1).get(2).get(1).get(4)
+        self.copy_conv_layer(self.conv512_256_catu, self.seventh_block.get(0))
+        self.copy_bn_layer(self.bn512_256_catu, self.seventh_block.get(1))
+        self.copy_conv_layer(self.conv256_128_catu, self.seventh_block.get(3))
+        self.copy_bn_layer(self.bn256_128_catu, self.seventh_block.get(4))
+
+        # block = unet:get(2):get(2):get(5)
+        # save_conv_unet_block(block)
+
+        self.eigth_block = self.lua_unet.get(1).get(1).get(4)
+        self.copy_conv_layer(self.conv256_128_u, self.seventh_block.get(0))
+        self.copy_bn_layer(self.bn256_128_u, self.seventh_block.get(1))
+        self.copy_conv_layer(self.conv128_64_u, self.seventh_block.get(3))
+        self.copy_bn_layer(self.bn128_64_u, self.seventh_block.get(4))
+
+        # block = unet:get(4)
+        # save_conv_unet_block(block)
+
+        # block = unet:get(5)
+        # save_conv(block)
 
         print('Have copied the weights of the first block')
 
@@ -228,14 +252,18 @@ class UNet(nn.Module):
         yTorch = self.pool_64(yTorch)
         yTorch = self.second_block.forward(yTorch)
         yTorch = self.pool_128(yTorch)
-        yTorch = self.third_block.forward(yTorch)
-        yTorch = self.pool_256(yTorch)
+        yTorch256 = self.third_block.forward(yTorch)
+        yTorch = self.pool_256(yTorch256)
         yTorch512 = self.fourth_block.forward(yTorch)
         yTorch = self.fifth_block.forward(yTorch512)
 
         yTorch = torch.cat([yTorch512, yTorch], dim=1)
 
         yTorch = self.sixth_block.forward(yTorch)
+
+        yTorch = torch.cat([yTorch256, yTorch], dim=1)
+
+        yTorch = self.seventh_block(yTorch)
 
         print('yTorch shape = ', yTorch.detach().numpy().shape)
 
@@ -270,9 +298,9 @@ class UNet(nn.Module):
         out = self.relu128_256(out)
         out = self.conv256_256(out)
         out = self.bn256_256(out)
-        out = self.relu256_256(out)
+        out_relu256 = self.relu256_256(out)
 
-        out = self.pool_256(out)
+        out = self.pool_256(out_relu256)
 
         out = self.conv256_512(out)
         out = self.bn256_512(out)
@@ -293,5 +321,15 @@ class UNet(nn.Module):
         out = self.conv512_256_u(out)
         out = self.bn512_256_u(out)
         out = self.relu512_256_u(out)
+        out = self.up256(out)
+
+        out = torch.cat([out_relu256, out], dim=1)
+        out = self.conv512_256_catu(out)
+        out = self.bn512_256_catu(out)
+        out = self.relu512_256_catu(out)
+        out = self.conv256_128_catu(out)
+        out = self.bn256_128_catu(out)
+        out = self.relu256_128_catu(out)
+        out = self.up128(out)
 
         return out
