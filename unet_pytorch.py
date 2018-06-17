@@ -95,34 +95,34 @@ class UNet(nn.Module):
         # self.concat512 = torch.cat([self.relu256_256, self.up256])
 
         self.conv512_256_catu = nn.Conv2d(512, 256, 3, 1, 1)
-        self.bn512_256_catu = nn.BatchNorm2d(256, track_running_stats=False)
+        self.bn512_256_catu = nn.BatchNorm2d(256, track_running_stats=True)
         self.bn512_256_catu.training = False
 
         self.relu512_256_catu = nn.ReLU(inplace=True)
         self.conv256_128_catu = nn.Conv2d(256, 128, 3, 1, 1)
-        self.bn256_128_catu = nn.BatchNorm2d(128, track_running_stats=False)
+        self.bn256_128_catu = nn.BatchNorm2d(128, track_running_stats=True)
         self.bn256_128_catu.training = False
 
         self.relu256_128_catu = nn.ReLU(inplace=True)
         self.up128 = nn.Upsample(scale_factor=2, mode='nearest')
 
-        self.conv256_128_u = nn.Conv2d(256, 128, 3, 1, 1)
-        self.bn256_128_u = nn.BatchNorm2d(128, track_running_stats=True)
-        self.bn256_128_u.training = False
-
-        self.relu256_128_u = nn.ReLU(inplace=True)
-        self.conv128_64_u = nn.Conv2d(128, 64, 3, 1, 1)
-        self.bn128_64_u = nn.BatchNorm2d(64, track_running_stats=True)
-        self.bn128_64_u.training = False
-
-        self.relu128_64_u = nn.ReLU(inplace=True)
-        self.up64 = nn.Upsample(scale_factor=2, mode='nearest')
+        # self.conv256_128_u = nn.Conv2d(256, 128, 3, 1, 1)
+        # self.bn256_128_u = nn.BatchNorm2d(128, track_running_stats=True)
+        # self.bn256_128_u.training = False
+        #
+        # self.relu256_128_u = nn.ReLU(inplace=True)
+        # self.conv128_64_u = nn.Conv2d(128, 64, 3, 1, 1)
+        # self.bn128_64_u = nn.BatchNorm2d(64, track_running_stats=True)
+        # self.bn128_64_u.training = False
+        #
+        # self.relu128_64_u = nn.ReLU(inplace=True)
+        # self.up64 = nn.Upsample(scale_factor=2, mode='nearest')
 
         # self.conv256_128_u = nn.Conv2d(128, 64, 3, 1, 1)
-        # self.bn256_128_u = nn.BatchNorm2d(64, track_running_states=False)
+        # self.bn256_128_u = nn.BatchNorm2d(64, track_running_states=True)
         # self.relu256_128_u = nn.ReLU(inplace=False)
         # self.conv256_128_u = nn.Conv2d(64, 64, 3, 1, 1)
-        # self.bn256_128_u = nn.BatchNorm2d(64, track_running_states=False)
+        # self.bn256_128_u = nn.BatchNorm2d(64, track_running_states=True)
         # self.relu256_128_u = nn.ReLU(inplace=True)
         #
         # self.output = nn.Conv2d(64, 14, 3, 1, 1)
@@ -225,6 +225,7 @@ class UNet(nn.Module):
         self.copy_bn_layer(self.bn512_256_catu, self.seventh_block.get(1))
         self.copy_conv_layer(self.conv256_128_catu, self.seventh_block.get(3))
         self.copy_bn_layer(self.bn256_128_catu, self.seventh_block.get(4))
+
 
         # block = unet:get(2):get(2):get(5)
         # save_conv_unet_block(block)
