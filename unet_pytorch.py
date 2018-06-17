@@ -261,7 +261,7 @@ class UNet(nn.Module):
 
         yTorch = torch.cat([yTorch64, yTorch], dim=1)
         yTorch = self.ninth_block.forward(yTorch)
-        yTorch = self.up64(yTorch)
+        # yTorch = self.up64(yTorch)
 
         # yTorch = self.tenth_block.forward(yTorch)
 
@@ -349,7 +349,7 @@ class UNet(nn.Module):
         out = self.bn64_64_ucat(out)
         out = self.relu64_64_u(out)
 
-        out = self.up64(out)
+        # out = self.up64(out)
 
         # out = self.conv_out_64(out)
 
