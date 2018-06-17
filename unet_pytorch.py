@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 from torch.utils.serialization import load_lua
-
 lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model.t7')
 
 from PIL import Image
@@ -72,26 +71,26 @@ class UNet(nn.Module):
         self.bn512_512.training = False
 
         self.relu512_512 = nn.ReLU(inplace=True)
-        self.pool_512 = nn.MaxPool2d(2, 2)
 
+        self.pool_512 = nn.MaxPool2d(2, 2)
         self.conv512_1024 = nn.Conv2d(512, 1024, 3, 1, 1)
         self.conv1024_512 = nn.Conv2d(1024, 512, 3, 1, 1)
         self.up512 = nn.Upsample(scale_factor=2, mode='nearest')
 
         # self.concat1024 = torch.cat([self.up512, self.relu512_512], dim=1)
 
-        # self.conv1024_512_u = nn.Conv2d(1024, 512, 3, 1, 1)
-        # self.bn1024_512_u = nn.BatchNorm2d(512, track_running_states=True)
-        # self.bn1024_512_u.training = False
-        #
-        # self.relu1024_512_u = nn.ReLU(inplace=False)
-        # self.conv512_256_u = nn.Conv2d(512, 256, 3, 1, 1)
-        #
-        # self.bn1024_256_u = nn.BatchNorm2d(256, track_running_states=True)
-        # self.bn1024_256_u.training = False
-        #
-        # self.relu512_256_u = nn.ReLU(inplace=True)
-        # self.up256 = nn.Upsample(scale_factor=2, mode='nearest')
+        self.conv1024_512_u = nn.Conv2d(1024, 512, 3, 1, 1)
+        self.bn1024_512_u = nn.BatchNorm2d(512, track_running_states=True)
+        self.bn1024_512_u.training = False
+
+        self.relu1024_512_u = nn.ReLU(inplace=False)
+        self.conv512_256_u = nn.Conv2d(512, 256, 3, 1, 1)
+
+        self.bn512_256_u = nn.BatchNorm2d(256, track_running_states=True)
+        self.bn512_256_u.training = False
+
+        self.relu512_256_u = nn.ReLU(inplace=True)
+        self.up256 = nn.Upsample(scale_factor=2, mode='nearest')
 
         # self.concat512 = torch.cat([self.relu256_256, self.up256])
 
@@ -210,6 +209,12 @@ class UNet(nn.Module):
         self.copy_conv_layer(self.conv512_1024, self.fifth_block.get(1))
         self.copy_conv_layer(self.conv1024_512, self.fifth_block.get(2))
 
+        self.sixth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(4)
+        self.copy_conv_layer(self.conv1024_512_u, self.sixth_block.get(0))
+        self.copy_bn_layer(self.bn1024_512_u, self.sixth_block.get(1))
+        self.copy_conv_layer(self.conv512_256_u, self.sixth_block.get(3))
+        self.copy_bn_layer(self.bn512_256_u, self.sixth_block.get(4))
+
 
         print('Have copied the weights of the first block')
 
@@ -227,6 +232,7 @@ class UNet(nn.Module):
         yTorch = self.pool_256(yTorch)
         yTorch = self.fourth_block.forward(yTorch)
         yTorch = self.fifth_block.forward(yTorch)
+        yTorch = self.sixth_block.forward(yTorch)
 
         print('yTorch shape = ', yTorch.detach().numpy().shape)
 
@@ -270,12 +276,19 @@ class UNet(nn.Module):
         out = self.relu256_512(out)
         out = self.conv512_512(out)
         out = self.bn512_512(out)
-        out = self.relu512_512(out)
+        out_relu512 = self.relu512_512(out)
 
-        out = self.pool_512(out)
-
+        out = self.pool_512(out_relu512)
         out = self.conv512_1024(out)
         out = self.conv1024_512(out)
         out = self.up512(out)
+
+        out = torch.cat([out_relu512, out], dim=1)
+        out = self.conv1024_512_u(out)
+        out = self.bn1024_512_u(out)
+        out = self.relu1024_512_u(out)
+        out = self.conv512_256_u(out)
+        out = self.bn512_256_u(out)
+        out = self.relu512_256_u(out)
 
         return out
