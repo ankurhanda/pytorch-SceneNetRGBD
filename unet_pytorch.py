@@ -259,10 +259,10 @@ class UNet(nn.Module):
         yTorch = self.eigth_block.forward(yTorch)
         yTorch = self.up128(yTorch)
 
-        # yTorch = torch.cat([yTorch64, yTorch], dim=1)
-        # yTorch = self.ninth_block.forward(yTorch)
-        # yTorch = self.up64(yTorch)
-        #
+        yTorch = torch.cat([yTorch64, yTorch], dim=1)
+        yTorch = self.ninth_block.forward(yTorch)
+        yTorch = self.up64(yTorch)
+
         # yTorch = self.tenth_block.forward(yTorch)
 
         print('yTorch shape = ', yTorch.detach().numpy().shape)
@@ -340,17 +340,17 @@ class UNet(nn.Module):
         out = self.bn128_64_u(out)
         out = self.relu128_64_u(out)
         out = self.up64(out)
-        #
-        # out = torch.cat([out_relu64, out], dim=1)
-        # out = self.conv128_64_ucat(out)
-        # out = self.bn128_64_ucat(out)
-        # out = self.relu128_64_ucat(out)
-        # out = self.conv64_64_ucat(out)
-        # out = self.bn64_64_ucat(out)
-        # out = self.relu64_64_u(out)
-        #
-        # out = self.up64(out)
-        #
+
+        out = torch.cat([out_relu64, out], dim=1)
+        out = self.conv128_64_ucat(out)
+        out = self.bn128_64_ucat(out)
+        out = self.relu128_64_ucat(out)
+        out = self.conv64_64_ucat(out)
+        out = self.bn64_64_ucat(out)
+        out = self.relu64_64_u(out)
+
+        out = self.up64(out)
+
         # out = self.conv_out_64(out)
 
         return out
