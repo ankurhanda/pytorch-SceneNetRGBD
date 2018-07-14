@@ -23,7 +23,22 @@ class UNetRGBD(nn.Module):
         self.bn_rgb_32_32.training = False
 
         self.relu_rgb_32_32 = nn.ReLU(inplace=True)
-        self.pool_rgb_32 = nn.MaxPool2d(2, 2)
+        self.pool = nn.MaxPool2d(2, 2)
+
+
+
+        self.conv_rgb_32_64 = nn.Conv2d(32, 64, 3, 1, 1)
+        self.bn_rgb_32_64 = nn.BatchNorm2d(64, track_running_stats=True)
+        self.bn_rgb_32_64.training = False
+
+        self.relu_rgb_32_64 = nn.ReLU(inplace=True)
+
+        self.conv_rgb_64_64 = nn.Conv2d(64, 64, 3, 1, 1)
+        self.bn_rgb_64_64 = nn.BatchNorm2d(64, track_running_stats=True)
+        self.bn_rgb_64_64.training = False
+
+        self.relu_rgb_64_64 = nn.ReLU(inplace=True)
+
 
         ''' D '''
 
@@ -38,8 +53,20 @@ class UNetRGBD(nn.Module):
         self.bn_d_32_32.training = False
 
         self.relu_d_32_32 = nn.ReLU(inplace=True)
-        self.pool_d_32 = nn.MaxPool2d(2, 2)
 
+
+
+        self.conv_d_32_64 = nn.Conv2d(32, 64, 3, 1, 1)
+        self.bn_d_32_64 = nn.BatchNorm2d(64, track_running_stats=True)
+        self.bn_d_32_64.training = False
+
+        self.relu_d_32_64 = nn.ReLU(inplace=True)
+
+        self.conv_d_64_64 = nn.Conv2d(64, 64, 3, 1, 1)
+        self.bn_d_64_64 = nn.BatchNorm2d(64, track_running_stats=True)
+        self.bn_d_64_64.training = False
+
+        self.relu_d_64_64 = nn.ReLU(inplace=True)
 
         '''
         self.conv64_128 = nn.Conv2d(64, 128, 3, 1, 1)
@@ -185,14 +212,27 @@ class UNetRGBD(nn.Module):
         self.copy_conv_layer(self.conv_d_32_32, self.first_d_block.get(3))
         self.copy_bn_layer(self.bn_d_32_32, self.first_d_block.get(4))
 
-        '''
+
+
+
+
         self.second_block = self.lua_unet.get(1).get(1).get(1)
 
-        self.copy_conv_layer(self.conv64_128, self.second_block.get(0))
-        self.copy_bn_layer(self.bn64_128, self.second_block.get(1))
-        self.copy_conv_layer(self.conv128_128, self.second_block.get(3))
-        self.copy_bn_layer(self.bn128_128, self.second_block.get(4))
+        self.second_rgb_block = self.second_block.get(0)
+        self.second_d_block = self.second_block.get(1)
 
+        self.copy_conv_layer(self.conv_rgb_32_64, self.second_rgb_block.get(0))
+        self.copy_bn_layer(self.bn_rgb_32_64, self.second_rgb_block.get(1))
+        self.copy_conv_layer(self.conv_rgb_64_64, self.second_rgb_block.get(3))
+        self.copy_bn_layer(self.bn_rgb_64_64, self.second_rgb_block.get(4))
+
+        self.copy_conv_layer(self.conv_d_32_64, self.second_d_block.get(0))
+        self.copy_bn_layer(self.bn_d_32_64, self.second_d_block.get(1))
+        self.copy_conv_layer(self.conv_d_64_64, self.second_d_block.get(3))
+        self.copy_bn_layer(self.bn_d_64_64, self.second_d_block.get(4))
+
+
+        '''
         self.third_block = self.lua_unet.get(1).get(1).get(2).get(1).get(1)
 
         self.copy_conv_layer(self.conv128_256, self.third_block.get(0))
@@ -260,17 +300,22 @@ class UNetRGBD(nn.Module):
 
         # Batch should be in NCHW format
         # input = np.ones((1, 3, 128, 128))
-        input_rgb = np.random.rand(1, 3, 16, 16)
+        input_rgb = np.random.rand(1, 3, 128, 128)
         myrgbImg = torch.tensor(input_rgb, dtype=torch.float32)
 
-        input_d = np.random.rand(1, 1, 16, 16)
+        input_d = np.random.rand(1, 1, 128, 128)
         mydImg = torch.tensor(input_d, dtype=torch.float32)
 
         # yTorch = self.lua_unet.forward((myrgbImg, mydImg))
 
         yTorch_rgb32, yTorch_d32 = self.first_block.forward((myrgbImg, mydImg))
-        yTorch_rgb32 = self.pool_rgb_32(yTorch_rgb32)
-        yTorch_d32 = self.pool_d_32(yTorch_d32)
+        yTorch_rgb32 = self.pool(yTorch_rgb32)
+        yTorch_d32   = self.pool(yTorch_d32)
+
+        yTorch_rgb64, yTorch_d64 = self.second_block.forward((yTorch_rgb32, yTorch_d32))
+        yTorch_rgb64 = self.pool(yTorch_rgb64)
+        yTorch_d64 = self.pool(yTorch_d64)
+
 
         # yTorch = self.pool_64(yTorch64)
         # yTorch128 = self.second_block.forward(yTorch)
@@ -297,17 +342,19 @@ class UNetRGBD(nn.Module):
         #
         # yTorch = self.tenth_block.forward(yTorch)
 
-        print('yTorch shape = ', yTorch_rgb32.detach().numpy().shape)
+        print('yTorch shape = ', yTorch_rgb64.detach().numpy().shape)
 
         ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
 
         print('ypTorch_rgb shape = ', ypyTorch_rgb.detach().numpy().shape)
         print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
 
-        print('DIFF {}'.format(np.sum(yTorch_rgb32.detach().numpy() - ypyTorch_rgb.detach().numpy())))
-        print('DIFF {}'.format(np.sum(yTorch_d32.detach().numpy() - ypyTorch_d.detach().numpy())))
+        print('DIFF {}'.format(np.sum(yTorch_rgb64.detach().numpy() - ypyTorch_rgb.detach().numpy())))
+        print('DIFF {}'.format(np.sum(yTorch_d64.detach().numpy() - ypyTorch_d.detach().numpy())))
 
     def forward(self, x):
+
+        ''' RGB '''
 
         out_rgb = self.conv_rgb_3_32(x[0])
         out_rgb = self.bn_rgb_3_32(out_rgb)
@@ -316,7 +363,18 @@ class UNetRGBD(nn.Module):
         out_rgb = self.bn_rgb_32_32(out_rgb)
         out_rgb_relu32 = self.relu_rgb_32_32(out_rgb)
 
-        out_rgb = self.pool_rgb_32(out_rgb_relu32)
+        out_rgb = self.pool(out_rgb_relu32)
+
+        out_rgb = self.conv_rgb_32_64(out_rgb)
+        out_rgb = self.bn_rgb_32_64(out_rgb)
+        out_rgb = self.relu_rgb_32_64(out_rgb)
+        out_rgb = self.conv_rgb_64_64(out_rgb)
+        out_rgb = self.bn_rgb_64_64(out_rgb)
+        out_rgb_relu64 = self.relu_rgb_64_64(out_rgb)
+
+        out_rgb = self.pool(out_rgb_relu64)
+
+        ''' D '''
 
         out_d = self.conv_d_3_32(x[1])
         out_d = self.bn_d_3_32(out_d)
@@ -325,8 +383,16 @@ class UNetRGBD(nn.Module):
         out_d = self.bn_d_32_32(out_d)
         out_d_relu32 = self.relu_d_32_32(out_d)
 
-        out_d = self.pool_rgb_32(out_d_relu32)
+        out_d = self.pool(out_d_relu32)
 
+        out_d = self.conv_d_32_64(out_d)
+        out_d = self.bn_d_32_64(out_d)
+        out_d = self.relu_d_32_64(out_d)
+        out_d = self.conv_d_64_64(out_d)
+        out_d = self.bn_d_64_64(out_d)
+        out_d_relu64 = self.relu_d_64_64(out_d)
+
+        out_d = self.pool(out_d_relu64)
 
 
         '''
