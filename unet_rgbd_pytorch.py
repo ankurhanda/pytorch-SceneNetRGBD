@@ -174,14 +174,14 @@ class UNetRGBD(nn.Module):
         self.first_d_block   = self.first_block.get(1)
 
         self.copy_conv_layer(self.conv_rgb_3_32, self.first_rgb_block.get(0))
-        self.copy_bn_layer(self.bn_rgb_3_64, self.first_rgb_block.get(1))
-        self.copy_conv_layer(self.conv_rgb_64_64, self.first_rgb_block.get(3))
-        self.copy_bn_layer(self.bn_rgb_64_64, self.first_rgb_block.get(4))
+        self.copy_bn_layer(self.bn_rgb_3_32, self.first_rgb_block.get(1))
+        self.copy_conv_layer(self.conv_rgb_32_32, self.first_rgb_block.get(3))
+        self.copy_bn_layer(self.bn_rgb_32_32, self.first_rgb_block.get(4))
 
         self.copy_conv_layer(self.conv_d_3_32, self.first_d_block.get(0))
-        self.copy_bn_layer(self.bn_d_3_64, self.first_d_block.get(1))
-        self.copy_conv_layer(self.conv_d_64_64, self.first_d_block.get(3))
-        self.copy_bn_layer(self.bn_d_64_64, self.first_d_block.get(4))
+        self.copy_bn_layer(self.bn_d_3_32, self.first_d_block.get(1))
+        self.copy_conv_layer(self.conv_d_32_32, self.first_d_block.get(3))
+        self.copy_bn_layer(self.bn_d_32_32, self.first_d_block.get(4))
 
         '''
         self.second_block = self.lua_unet.get(1).get(1).get(1)
