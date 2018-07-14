@@ -320,20 +320,20 @@ class UNetRGBD(nn.Module):
 
 
 
-        self.fourth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(1)
-
-        self.fourth_rgb_block = self.fourth_block.get(0)
-        self.fourth_d_block = self.fourth_block.get(1)
-
-        self.copy_conv_layer(self.conv_rgb_64_128, self.fourth_rgb_block.get(0))
-        self.copy_bn_layer(self.bn_rgb_64_128, self.fourth_rgb_block.get(1))
-        self.copy_conv_layer(self.conv_rgb_128_128, self.fourth_rgb_block.get(3))
-        self.copy_bn_layer(self.bn_rgb_128_128, self.fourth_rgb_block.get(4))
-
-        self.copy_conv_layer(self.conv_d_64_128, self.fourth_d_block.get(0))
-        self.copy_bn_layer(self.bn_d_64_128, self.fourth_d_block.get(1))
-        self.copy_conv_layer(self.conv_d_128_128, self.fourth_d_block.get(3))
-        self.copy_bn_layer(self.bn_d_128_128, self.fourth_d_block.get(4))
+        # self.fourth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(1)
+        #
+        # self.fourth_rgb_block = self.fourth_block.get(0)
+        # self.fourth_d_block = self.fourth_block.get(1)
+        #
+        # self.copy_conv_layer(self.conv_rgb_64_128, self.fourth_rgb_block.get(0))
+        # self.copy_bn_layer(self.bn_rgb_64_128, self.fourth_rgb_block.get(1))
+        # self.copy_conv_layer(self.conv_rgb_128_128, self.fourth_rgb_block.get(3))
+        # self.copy_bn_layer(self.bn_rgb_128_128, self.fourth_rgb_block.get(4))
+        #
+        # self.copy_conv_layer(self.conv_d_64_128, self.fourth_d_block.get(0))
+        # self.copy_bn_layer(self.bn_d_64_128, self.fourth_d_block.get(1))
+        # self.copy_conv_layer(self.conv_d_128_128, self.fourth_d_block.get(3))
+        # self.copy_bn_layer(self.bn_d_128_128, self.fourth_d_block.get(4))
 
 
 
@@ -505,7 +505,7 @@ class UNetRGBD(nn.Module):
         ''' D '''
 
         '''first block '''
-        
+
         out_d = self.conv_d_3_32(x[1])
         out_d = self.bn_d_3_32(out_d)
         out_d = self.relu_d_3_32(out_d)
