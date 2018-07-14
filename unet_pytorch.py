@@ -28,7 +28,6 @@ class UNet(nn.Module):
 
 
 
-
         self.conv64_128 = nn.Conv2d(64, 128, 3, 1, 1)
         self.bn64_128 = nn.BatchNorm2d(128, track_running_stats=True)
         self.bn64_128.training = False
