@@ -269,8 +269,8 @@ class UNetRGBD(nn.Module):
         # yTorch = self.lua_unet.forward((myrgbImg, mydImg))
 
         yTorch_rgb32, yTorch_d32 = self.first_block.forward((myrgbImg, mydImg))
-        # yTorch_rgb32 = self.pool_rgb_32(yTorch_rgb32)
-        # yTorch_d32 = self.pool_d_32(yTorch_d32)
+        yTorch_rgb32 = self.pool_rgb_32(yTorch_rgb32)
+        yTorch_d32 = self.pool_d_32(yTorch_d32)
 
         # yTorch = self.pool_64(yTorch64)
         # yTorch128 = self.second_block.forward(yTorch)
