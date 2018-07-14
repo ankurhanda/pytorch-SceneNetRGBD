@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.serialization import load_lua
-# lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGBD_EPOCH_10/converted_model.t7')
+lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGBD_EPOCH_10/converted_model.t7')
 
 import numpy as np
 
@@ -260,11 +260,11 @@ class UNetRGBD(nn.Module):
 
         # Batch should be in NCHW format
         # input = np.ones((1, 3, 128, 128))
-        input = np.random.rand(1, 3, 16, 16)
-        myrgbImg = torch.tensor(input, dtype=torch.float32)
+        input_rgb = np.random.rand(1, 3, 16, 16)
+        myrgbImg = torch.tensor(input_rgb, dtype=torch.float32)
 
-        input = np.random.rand(1, 3, 16, 16)
-        mydImg = torch.tensor(input, dtype=torch.float32)
+        input_d = np.random.rand(1, 1, 16, 16)
+        mydImg = torch.tensor(input_d, dtype=torch.float32)
 
         # yTorch = self.lua_unet.forward((myrgbImg, mydImg))
 
