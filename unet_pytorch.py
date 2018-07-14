@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.serialization import load_lua
-lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model.t7')
+# lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGB_EPOCH_15/converted_model.t7')
 
 from PIL import Image
 import numpy as np
