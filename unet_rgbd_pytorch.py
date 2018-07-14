@@ -505,6 +505,18 @@ class UNetRGBD(nn.Module):
         out_rgb = self.pool(out_rgb_relu128)
 
 
+        ''' fourth block '''
+
+        out_rgb = self.conv_rgb_128_256(out_rgb)
+        out_rgb = self.bn_rgb_128_256(out_rgb)
+        out_rgb = self.relu_rgb_128_256(out_rgb)
+        out_rgb = self.conv_rgb_256_256(out_rgb)
+        out_rgb = self.bn_rgb_256_256(out_rgb)
+        out_rgb_relu256 = self.relu_rgb_256_256(out_rgb)
+
+        out_rgb = self.pool(out_rgb_relu256)
+
+
 
         ''' D '''
 
@@ -541,6 +553,17 @@ class UNetRGBD(nn.Module):
 
         out_d = self.pool(out_d_relu128)
 
+
+        ''' fourth '''
+
+        out_d = self.conv_d_128_256(out_d)
+        out_d = self.bn_d_128_256(out_d)
+        out_d = self.relu_d_128_256(out_d)
+        out_d = self.conv_d_256_256(out_d)
+        out_d = self.bn_d_256_256(out_d)
+        out_d_relu256 = self.relu_d_256_256(out_d)
+
+        out_d = self.pool(out_d_relu256)
 
         '''
         out = self.conv64_128(out)
