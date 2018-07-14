@@ -320,20 +320,20 @@ class UNetRGBD(nn.Module):
 
 
 
-        # self.fourth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(1)
-        #
-        # self.fourth_rgb_block = self.fourth_block.get(0)
-        # self.fourth_d_block = self.fourth_block.get(1)
-        #
-        # self.copy_conv_layer(self.conv_rgb_64_128, self.fourth_rgb_block.get(0))
-        # self.copy_bn_layer(self.bn_rgb_64_128, self.fourth_rgb_block.get(1))
-        # self.copy_conv_layer(self.conv_rgb_128_128, self.fourth_rgb_block.get(3))
-        # self.copy_bn_layer(self.bn_rgb_128_128, self.fourth_rgb_block.get(4))
-        #
-        # self.copy_conv_layer(self.conv_d_64_128, self.fourth_d_block.get(0))
-        # self.copy_bn_layer(self.bn_d_64_128, self.fourth_d_block.get(1))
-        # self.copy_conv_layer(self.conv_d_128_128, self.fourth_d_block.get(3))
-        # self.copy_bn_layer(self.bn_d_128_128, self.fourth_d_block.get(4))
+        self.fourth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(1)
+
+        self.fourth_rgb_block = self.fourth_block.get(0)
+        self.fourth_d_block = self.fourth_block.get(1)
+
+        self.copy_conv_layer(self.conv_rgb_128_256, self.fourth_rgb_block.get(0))
+        self.copy_bn_layer(self.bn_rgb_128_256, self.fourth_rgb_block.get(1))
+        self.copy_conv_layer(self.conv_rgb_256_256, self.fourth_rgb_block.get(3))
+        self.copy_bn_layer(self.bn_rgb_256_256, self.fourth_rgb_block.get(4))
+
+        self.copy_conv_layer(self.conv_d_128_256, self.fourth_d_block.get(0))
+        self.copy_bn_layer(self.bn_d_128_256, self.fourth_d_block.get(1))
+        self.copy_conv_layer(self.conv_d_256_256, self.fourth_d_block.get(3))
+        self.copy_bn_layer(self.bn_d_256_256, self.fourth_d_block.get(4))
 
 
 
@@ -425,6 +425,10 @@ class UNetRGBD(nn.Module):
         yTorch_rgb128 = self.pool(yTorch_rgb128)
         yTorch_d128 = self.pool(yTorch_d128)
 
+        yTorch_rgb256, yTorch_d256 = self.fourth_block.forward((yTorch_rgb128, yTorch_d128))
+        yTorch_rgb256 = self.pool(yTorch_rgb256)
+        yTorch_d256 = self.pool(yTorch_d256)
+
 
 
 
@@ -453,15 +457,15 @@ class UNetRGBD(nn.Module):
         #
         # yTorch = self.tenth_block.forward(yTorch)
 
-        print('yTorch shape = ', yTorch_rgb128.detach().numpy().shape)
+        print('yTorch shape = ', yTorch_rgb256.detach().numpy().shape)
 
         ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
 
         print('ypTorch_rgb shape = ', ypyTorch_rgb.detach().numpy().shape)
         print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
 
-        print('DIFF {}'.format(np.sum(yTorch_rgb128.detach().numpy() - ypyTorch_rgb.detach().numpy())))
-        print('DIFF {}'.format(np.sum(yTorch_d128.detach().numpy() - ypyTorch_d.detach().numpy())))
+        print('DIFF {}'.format(np.sum(yTorch_rgb256.detach().numpy() - ypyTorch_rgb.detach().numpy())))
+        print('DIFF {}'.format(np.sum(yTorch_d256.detach().numpy() - ypyTorch_d.detach().numpy())))
 
     def forward(self, x):
 
