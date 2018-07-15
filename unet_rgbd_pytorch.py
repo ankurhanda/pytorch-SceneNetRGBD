@@ -283,8 +283,6 @@ class UNetRGBD(nn.Module):
         self.copy_conv_layer(self.conv512_1024, self.fifth_block.get(2))
         self.copy_conv_layer(self.conv1024_512, self.fifth_block.get(3))
 
-        # self.remove_modules()
-
 
         self.sixth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(3)
 
@@ -345,10 +343,10 @@ class UNetRGBD(nn.Module):
 
         # Batch should be in NCHW format
         # input = np.ones((1, 3, 128, 128))
-        input_rgb = np.random.rand(1, 3, 32, 32)
+        input_rgb = np.random.rand(1, 3, 128, 128)
         myrgbImg = torch.tensor(input_rgb, dtype=torch.float32)
 
-        input_d = np.random.rand(1, 1, 32, 32)
+        input_d = np.random.rand(1, 1, 128, 128)
         mydImg = torch.tensor(input_d, dtype=torch.float32)
 
         # yTorch = self.lua_unet.forward((myrgbImg, mydImg))
