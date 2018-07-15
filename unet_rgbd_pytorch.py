@@ -282,57 +282,19 @@ class UNetRGBD(nn.Module):
 
         # Batch should be in NCHW format
         # input = np.ones((1, 3, 128, 128))
-        input_rgb = np.ones((1, 3, 64, 64))
+        input_rgb = np.random.rand(1, 3, 64, 64)
         myrgbImg = torch.tensor(input_rgb, dtype=torch.float32)
 
-        input_d = np.ones((1, 1, 64, 64))
+        input_d = np.random.rand(1, 1, 64, 64)
         mydImg = torch.tensor(input_d, dtype=torch.float32)
 
         yTorch_rgb = self.lua_unet.forward((myrgbImg, mydImg))
 
-        print('yOut = ', yTorch_rgb)
-
-        # print(yTorch_out)
-
-        # yTorch = self.pool_64(yTorch64)
-        # yTorch128 = self.second_block.forward(yTorch)
-        # yTorch = self.pool_128(yTorch128)
-        # yTorch256 = self.third_block.forward(yTorch)
-        # yTorch = self.pool_256(yTorch256)
-        # yTorch512 = self.fourth_block.forward(yTorch)
-        # yTorch = self.fifth_block.forward(yTorch512)
-        #
-        # yTorch = torch.cat([yTorch512, yTorch], dim=1)
-        # yTorch = self.sixth_block.forward(yTorch)
-        # yTorch = self.up512(yTorch)
-        #
-        # yTorch = torch.cat([yTorch256, yTorch], dim=1)
-        # yTorch = self.seventh_block.forward(yTorch)
-        # yTorch = self.up256(yTorch)
-        #
-        # yTorch = torch.cat([yTorch128, yTorch], dim=1)
-        # yTorch = self.eigth_block.forward(yTorch)
-        # yTorch = self.up128(yTorch)
-        #
-        # yTorch = torch.cat([yTorch64, yTorch], dim=1)
-        # yTorch = self.ninth_block.forward(yTorch)
-        #
-        # yTorch = self.tenth_block.forward(yTorch)
-
-
-        # print('yTorch shape = ', yTorch_out.detach().numpy().shape)
-        # # print('yTorch shape = ', np.array(yTorch_out).shape)
-        #
-        # # ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
         ypyTorch_rgb = self.forward((myrgbImg, mydImg))
 
-        print('ypyTorch_rgb = ', ypyTorch_rgb)
-
         print('ypTorch_rgb shape = ', ypyTorch_rgb.detach().numpy().shape)
-        # print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
 
         print('DIFF {}'.format(np.sum(yTorch_rgb.detach().numpy() - ypyTorch_rgb.detach().numpy())))
-        # print('DIFF {}'.format(np.sum(yTorch_d.detach().numpy() - ypyTorch_d.detach().numpy())))
 
     def forward(self, x):
 
