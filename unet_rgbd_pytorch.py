@@ -401,8 +401,13 @@ class UNetRGBD(nn.Module):
         # yTorch_rgb = yTorch_rgb[0]
 
         concat = self.lua_unet.get(1).get(1).get(2).get(1)
+
+
+
         del concat.modules[5]
         del concat.modules[5]
+
+        print(concat)
 
         yTorch_rgb = concat.forward((yTorch_rgb, yTorch_d))
 
