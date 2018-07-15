@@ -19,6 +19,7 @@ class UNetRGBD(nn.Module):
         self.bn_rgb_3_32.training = False
 
         self.relu_rgb_3_32 = nn.ReLU(inplace=True)
+        self.relu = nn.ReLU(inplace=True)
 
         self.conv_rgb_32_32 = nn.Conv2d(32, 32, 3, 1, 1)
         self.bn_rgb_32_32 = nn.BatchNorm2d(32, track_running_stats=True)
@@ -179,7 +180,7 @@ class UNetRGBD(nn.Module):
 
 
         self.conv_out_64 = nn.Conv2d(64, 14, 1, 1, 0)
-        
+
 
 
     def copy_bn_layer(self, pytorch_bn_layer, torch_bn_layer):
@@ -238,10 +239,6 @@ class UNetRGBD(nn.Module):
 
 
 
-
-
-
-
         self.third_block = self.lua_unet.get(1).get(1).get(2).get(1).get(1)
 
         self.third_rgb_block = self.third_block.get(0)
@@ -256,8 +253,6 @@ class UNetRGBD(nn.Module):
         self.copy_bn_layer(self.bn_d_64_128, self.third_d_block.get(1))
         self.copy_conv_layer(self.conv_d_128_128, self.third_d_block.get(3))
         self.copy_bn_layer(self.bn_d_128_128, self.third_d_block.get(4))
-
-
 
 
 
@@ -479,7 +474,7 @@ class UNetRGBD(nn.Module):
         out_rgb = self.relu_rgb_3_32(out_rgb)
         out_rgb = self.conv_rgb_32_32(out_rgb)
         out_rgb = self.bn_rgb_32_32(out_rgb)
-        out_rgb_relu32 = self.relu_rgb_32_32(out_rgb)
+        out_rgb_relu32 = self.relu(out_rgb)
 
         out_rgb = self.pool(out_rgb_relu32)
 
@@ -490,7 +485,7 @@ class UNetRGBD(nn.Module):
         out_rgb = self.relu_rgb_32_64(out_rgb)
         out_rgb = self.conv_rgb_64_64(out_rgb)
         out_rgb = self.bn_rgb_64_64(out_rgb)
-        out_rgb_relu64 = self.relu_rgb_64_64(out_rgb)
+        out_rgb_relu64 = self.relu(out_rgb)
 
         out_rgb = self.pool(out_rgb_relu64)
 
@@ -501,7 +496,7 @@ class UNetRGBD(nn.Module):
         out_rgb = self.relu_rgb_64_128(out_rgb)
         out_rgb = self.conv_rgb_128_128(out_rgb)
         out_rgb = self.bn_rgb_128_128(out_rgb)
-        out_rgb_relu128 = self.relu_rgb_128_128(out_rgb)
+        out_rgb_relu128 = self.relu(out_rgb)
 
         out_rgb = self.pool(out_rgb_relu128)
 
@@ -513,7 +508,7 @@ class UNetRGBD(nn.Module):
         out_rgb = self.relu_rgb_128_256(out_rgb)
         out_rgb = self.conv_rgb_256_256(out_rgb)
         out_rgb = self.bn_rgb_256_256(out_rgb)
-        out_rgb_relu256 = self.relu_rgb_256_256(out_rgb)
+        out_rgb_relu256 = self.relu(out_rgb)
 
         out_rgb = out_rgb_relu256
 
