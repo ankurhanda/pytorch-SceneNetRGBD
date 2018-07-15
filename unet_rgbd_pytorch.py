@@ -343,8 +343,8 @@ class UNetRGBD(nn.Module):
 
 
         self.fifth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(2)
-        self.copy_conv_layer(self.conv512_1024, self.fifth_d_block.get(2))
-        self.copy_conv_layer(self.conv1024_512, self.fifth_d_block.get(3))
+        self.copy_conv_layer(self.conv512_1024, self.fifth_block.get(2))
+        self.copy_conv_layer(self.conv1024_512, self.fifth_block.get(3))
 
 
         self.make_everything_identity()
