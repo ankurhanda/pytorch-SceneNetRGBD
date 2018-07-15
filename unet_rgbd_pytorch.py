@@ -385,40 +385,37 @@ class UNetRGBD(nn.Module):
 
         yTorch_rgb, yTorch_d = lua_unet_64.forward((yTorch_rgb, yTorch_d))
 
-        lua_unet_pool = self.lua_unet.get(1).get(1).get(2).get(1).get(0)
-
-        yTorch_rgb, yTorch_d = lua_unet_pool.forward((yTorch_rgb, yTorch_d))
-
-        lua_unet_128 = self.lua_unet.get(1).get(1).get(2).get(1).get(1)
-
-        yTorch_rgb, yTorch_d = lua_unet_128.forward((yTorch_rgb, yTorch_d))
-
-        first_concat = self.lua_unet.get(1).get(1).get(2).get(1).get(2)
-        del first_concat.modules[0]
-        # del first_concat.modules[0].modules[3]
-        # del first_concat.modules[0].modules[3]
-
-        yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
-        yTorch_rgb = yTorch_rgb[0]
-
-        print(first_concat)
-
-
-
-        # concat = self.lua_unet.get(1).get(1).get(2).get(1)
-
-
-
-        # del concat.modules[5]
-        # del concat.modules[5]
-        # del concat.modules[4]
+        # lua_unet_pool = self.lua_unet.get(1).get(1).get(2).get(1).get(0)
         #
-        # del concat.modules[2].modules[0]
-        # del concat.modules[3]
+        # yTorch_rgb, yTorch_d = lua_unet_pool.forward((yTorch_rgb, yTorch_d))
         #
-        # print(concat)
+        # lua_unet_128 = self.lua_unet.get(1).get(1).get(2).get(1).get(1)
         #
-        # yTorch_rgb = concat.forward((yTorch_rgb, yTorch_d))
+        # yTorch_rgb, yTorch_d = lua_unet_128.forward((yTorch_rgb, yTorch_d))
+        #
+        # first_concat = self.lua_unet.get(1).get(1).get(2).get(1).get(2)
+        # del first_concat.modules[0]
+        # # del first_concat.modules[0].modules[3]
+        # # del first_concat.modules[0].modules[3]
+        #
+        # yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
+        # yTorch_rgb = yTorch_rgb[0]
+        #
+        # print(first_concat)
+
+        concat = self.lua_unet.get(1).get(1).get(2).get(1)
+
+
+        del concat.modules[5]
+        del concat.modules[5]
+        del concat.modules[4]
+
+        del concat.modules[2].modules[0]
+        del concat.modules[3]
+
+        print(concat)
+
+        yTorch_rgb = concat.forward((yTorch_rgb, yTorch_d))
 
         # print('yTorch_rgb_128 = ', yTorch_rgb_128)
         #
@@ -588,18 +585,16 @@ class UNetRGBD(nn.Module):
         out = self.up(out)
         
 
+        out = torch.cat([out_rgb_relu128, out_d_relu128, out], dim=1)
+        out = self.conv_512_256_n(out)
+        out = self.bn_512_256_n(out)
+        out = self.relu512_256_n(out)
 
+        out = self.conv_256_128(out)
+        out = self.bn_256_128(out)
+        out = self.relu256_128(out)
 
-        # out = torch.cat([out_rgb_relu128, out_d_relu128, out], dim=1)
-        # out = self.conv_512_256_n(out)
-        # out = self.bn_512_256_n(out)
-        # out = self.relu512_256_n(out)
-        #
-        # out = self.conv_256_128(out)
-        # out = self.bn_256_128(out)
-        # out = self.relu256_128(out)
-        #
-        # out = self.up(out)
+        out = self.up(out)
 
         '''
 
