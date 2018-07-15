@@ -521,11 +521,11 @@ class UNetRGBD(nn.Module):
 
         out = self.conv_512_512(out)
         out = self.bn_512_512(out)
-        out = self.relu_512_512(out)
+        out = self.relu512_512(out)
 
         out = self.conv_512_256(out)
         out = self.bn_512_256(out)
-        out = self.relu_512_256(out)
+        out = self.relu512_256(out)
 
         out = self.up(out)
 
