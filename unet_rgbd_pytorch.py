@@ -483,7 +483,7 @@ class UNetRGBD(nn.Module):
 
         yTorch_out = self.lua_unet.forward((myrgbImg, mydImg))
 
-        print(yTorch_out)
+        # print(yTorch_out)
 
         # yTorch = self.pool_64(yTorch64)
         # yTorch128 = self.second_block.forward(yTorch)
@@ -510,7 +510,8 @@ class UNetRGBD(nn.Module):
         #
         # yTorch = self.tenth_block.forward(yTorch)
 
-        print('yTorch shape = ', yTorch_out.detach().numpy().shape)
+        # print('yTorch shape = ', yTorch_out.detach().numpy().shape)
+        print('yTorch shape = ', yTorch_out.numpy().shape)
 
         # ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
         ypyTorch_out = self.forward((myrgbImg, mydImg))
