@@ -396,8 +396,8 @@ class UNetRGBD(nn.Module):
 
         first_concat = self.lua_unet.get(1).get(1).get(2).get(1).get(2)
         del first_concat.modules[0]
-        del first_concat.modules[3]
-        del first_concat.modules[3]
+        del first_concat.modules[0].modules[3]
+        del first_concat.modules[0].modules[3]
 
         yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
         yTorch_rgb = yTorch_rgb[0]
