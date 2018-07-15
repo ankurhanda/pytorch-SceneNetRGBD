@@ -406,9 +406,9 @@ class UNetRGBD(nn.Module):
         concat = self.lua_unet.get(1).get(1).get(2).get(1)
 
 
-        del concat.modules[5]
-        del concat.modules[5]
-        del concat.modules[4]
+        # del concat.modules[5]
+        # del concat.modules[5]
+        # del concat.modules[4]
 
         # del concat.modules[2].modules[0]
         # del concat.modules[3]
