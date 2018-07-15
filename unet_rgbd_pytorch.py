@@ -568,15 +568,15 @@ class UNetRGBD(nn.Module):
 
 
         out = torch.cat([out_rgb_relu128, out_d_relu128, out], dim=1)
-        out = self.conv_512_256_n(out)
-        out = self.bn_512_256_n(out)
-        out = self.relu512_256_n(out)
-
-        out = self.conv_256_128(out)
-        out = self.bn_256_128(out)
-        out = self.relu256_128(out)
-
-        out = self.up(out)
+        # out = self.conv_512_256_n(out)
+        # out = self.bn_512_256_n(out)
+        # out = self.relu512_256_n(out)
+        #
+        # out = self.conv_256_128(out)
+        # out = self.bn_256_128(out)
+        # out = self.relu256_128(out)
+        #
+        # out = self.up(out)
 
         '''
 
