@@ -216,7 +216,6 @@ class UNetRGBD(nn.Module):
 
 
 
-
         self.fourth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(1)
 
         self.fourth_rgb_block = self.fourth_block.get(0)
@@ -282,10 +281,10 @@ class UNetRGBD(nn.Module):
 
         # Batch should be in NCHW format
         # input = np.ones((1, 3, 128, 128))
-        input_rgb = np.random.rand(1, 3, 64, 64)
+        input_rgb = np.random.rand(1, 3, 128, 128)
         myrgbImg = torch.tensor(input_rgb, dtype=torch.float32)
 
-        input_d = np.random.rand(1, 1, 64, 64)
+        input_d = np.random.rand(1, 1, 128, 128)
         mydImg = torch.tensor(input_d, dtype=torch.float32)
 
         yTorch_rgb = self.lua_unet.forward((myrgbImg, mydImg))
