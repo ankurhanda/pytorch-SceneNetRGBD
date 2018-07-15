@@ -406,10 +406,11 @@ class UNetRGBD(nn.Module):
 
         del concat.modules[5]
         del concat.modules[5]
+        del concat.modules[4]
 
         print(concat)
 
-        yTorch_rgb = concat.forward((yTorch_rgb, yTorch_d))
+        yTorch_rgb_128, yTorch_d128, yTorch_rgb = concat.forward((yTorch_rgb, yTorch_d))
 
 
         # print(yTorch_out)
@@ -572,7 +573,7 @@ class UNetRGBD(nn.Module):
         out = self.up(out)
 
 
-        out = torch.cat([out_rgb_relu128, out_d_relu128, out], dim=1)
+        # out = torch.cat([out_rgb_relu128, out_d_relu128, out], dim=1)
         # out = self.conv_512_256_n(out)
         # out = self.bn_512_256_n(out)
         # out = self.relu512_256_n(out)
