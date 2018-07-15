@@ -511,7 +511,7 @@ class UNetRGBD(nn.Module):
         # yTorch = self.tenth_block.forward(yTorch)
 
         # print('yTorch shape = ', yTorch_out.detach().numpy().shape)
-        print('yTorch shape = ', yTorch_out.numpy().shape)
+        print('yTorch shape = ', np.array(yTorch_out).shape)
 
         # ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
         ypyTorch_out = self.forward((myrgbImg, mydImg))
