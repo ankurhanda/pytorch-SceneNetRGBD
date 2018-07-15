@@ -155,7 +155,7 @@ class UNetRGBD(nn.Module):
         self.bn_256_128.training = False
         self.relu256_128 = nn.ReLU(inplace=True)
 
-        '''
+
         self.conv_256_128_n = nn.Conv2d(256, 128, 3, 1, 1)
         self.bn_256_128_n = nn.BatchNorm2d(128, track_running_stats=True)
         self.bn_256_128_n.training = False
@@ -179,7 +179,7 @@ class UNetRGBD(nn.Module):
 
 
         self.conv_out_64 = nn.Conv2d(64, 14, 1, 1, 0)
-        '''
+        
 
 
     def copy_bn_layer(self, pytorch_bn_layer, torch_bn_layer):
@@ -301,7 +301,7 @@ class UNetRGBD(nn.Module):
         self.copy_conv_layer(self.conv_256_128, self.seventh_block.get(3))
         self.copy_bn_layer(self.bn_256_128, self.seventh_block.get(4))
 
-        '''
+
         self.eigth_block = self.lua_unet.get(1).get(1).get(5)
 
         self.copy_conv_layer(self.conv_256_128_n, self.eigth_block.get(0))
@@ -319,7 +319,7 @@ class UNetRGBD(nn.Module):
 
         self.tenth_block = self.lua_unet.get(5)
         self.copy_conv_layer(self.conv_out_64, self.tenth_block)
-        '''
+
 
         print('Have copied the weights of the first block')
 
@@ -621,6 +621,6 @@ class UNetRGBD(nn.Module):
         out = self.relu64_64(out)
 
         out = self.conv_out_64(out)
-        
+
 
         return out
