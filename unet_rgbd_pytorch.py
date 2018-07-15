@@ -400,6 +400,8 @@ class UNetRGBD(nn.Module):
         yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
         yTorch_rgb = yTorch_rgb[0]
 
+        print(first_concat)
+
         # concat = self.lua_unet.get(1).get(1).get(2).get(1)
 
 
@@ -581,7 +583,7 @@ class UNetRGBD(nn.Module):
         out = self.relu512_256(out)
 
         out = self.up(out)
-        
+
 
 
         # out = torch.cat([out_rgb_relu128, out_d_relu128, out], dim=1)
