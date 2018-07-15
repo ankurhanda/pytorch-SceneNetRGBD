@@ -367,17 +367,32 @@ class UNetRGBD(nn.Module):
         # yTorch_d256 = self.pool(yTorch_d256)
 
 
-        lua_unet_0 = self.lua_unet.get(0)
+        lua_unet_32 = self.lua_unet.get(0)
 
-        yTorch_rgb, yTorch_d = lua_unet_0.forward((myrgbImg, mydImg))
+        yTorch_rgb, yTorch_d = lua_unet_32.forward((myrgbImg, mydImg))
 
-        lua_unet_0 = self.lua_unet.get(1).get(1).get(0)
+        lua_unet_pool = self.lua_unet.get(1).get(1).get(0)
 
-        yTorch_rgb, yTorch_d = lua_unet_0.forward((yTorch_rgb, yTorch_d))
+        yTorch_rgb, yTorch_d = lua_unet_pool.forward((yTorch_rgb, yTorch_d))
 
-        lua_unet_0 = self.lua_unet.get(1).get(1).get(1)
+        lua_unet_64 = self.lua_unet.get(1).get(1).get(1)
 
-        yTorch_rgb, yTorch_d = lua_unet_0.forward((yTorch_rgb, yTorch_d))
+        yTorch_rgb, yTorch_d = lua_unet_64.forward((yTorch_rgb, yTorch_d))
+
+        lua_unet_pool = self.lua_unet.get(1).get(1).get(2).get(1).get(0)
+
+        yTorch_rgb, yTorch_d = lua_unet_pool.forward((yTorch_rgb, yTorch_d))
+
+        lua_unet_128 = self.lua_unet.get(1).get(1).get(2).get(1).get(1)
+
+        yTorch_rgb, yTorch_d = lua_unet_128.forward((yTorch_rgb, yTorch_d))
+
+
+
+        # concat = lua_unet.get(1).get(1).get(2).get(1).get(2)
+        # del concat.modules[0]
+
+
 
         # print(yTorch_out)
 
@@ -573,4 +588,4 @@ class UNetRGBD(nn.Module):
         out = self.conv_out_64(out)
         '''
 
-        return (out_rgb_relu64, out_d_relu64)
+        return (out_rgb_relu128, out_d_relu128)
