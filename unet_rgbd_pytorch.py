@@ -393,6 +393,7 @@ class UNetRGBD(nn.Module):
         del first_concat.modules[0].modules[3]
 
         yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
+        yTorch_rgb = yTorch_rgb[0]
 
 
 
