@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
 from torch.utils.serialization import load_lua
+import numpy as np
+
 #lua_unet = load_lua('../SCENENET_RESULTS_FOLDER_RERUN/NYUv2_TABLE/SCENENET_RGBD_EPOCH_10/converted_model.t7')
 
-import numpy as np
 
 
 class UNetRGBD(nn.Module):
@@ -154,6 +155,7 @@ class UNetRGBD(nn.Module):
         self.bn_256_128.training = False
         self.relu256_128 = nn.ReLU(inplace=True)
 
+        '''
         self.conv_256_128_n = nn.Conv2d(256, 128, 3, 1, 1)
         self.bn_256_128_n = nn.BatchNorm2d(128, track_running_stats=True)
         self.bn_256_128_n.training = False
@@ -177,6 +179,7 @@ class UNetRGBD(nn.Module):
 
 
         self.conv_out_64 = nn.Conv2d(64, 14, 1, 1, 0)
+        '''
 
 
     def copy_bn_layer(self, pytorch_bn_layer, torch_bn_layer):
@@ -289,7 +292,7 @@ class UNetRGBD(nn.Module):
         self.copy_conv_layer(self.conv_512_256, self.sixth_block.get(3))
         self.copy_bn_layer(self.bn_512_256, self.sixth_block.get(4))
 
-        '''
+
         
         self.seventh_block = self.lua_unet.get(1).get(1).get(2).get(1).get(5)
 
@@ -297,6 +300,8 @@ class UNetRGBD(nn.Module):
         self.copy_bn_layer(self.bn_512_256, self.seventh_block.get(1))
         self.copy_conv_layer(self.conv_256_128, self.seventh_block.get(3))
         self.copy_bn_layer(self.bn_256_128, self.seventh_block.get(4))
+
+        '''
 
         self.eigth_block = self.lua_unet.get(1).get(1).get(5)
 
@@ -381,21 +386,23 @@ class UNetRGBD(nn.Module):
 
         yTorch_rgb, yTorch_d = lua_unet_64.forward((yTorch_rgb, yTorch_d))
 
-        lua_unet_pool = self.lua_unet.get(1).get(1).get(2).get(1).get(0)
+        # lua_unet_pool = self.lua_unet.get(1).get(1).get(2).get(1).get(0)
+        #
+        # yTorch_rgb, yTorch_d = lua_unet_pool.forward((yTorch_rgb, yTorch_d))
+        #
+        # lua_unet_128 = self.lua_unet.get(1).get(1).get(2).get(1).get(1)
+        #
+        # yTorch_rgb, yTorch_d = lua_unet_128.forward((yTorch_rgb, yTorch_d))
+        #
+        # first_concat = self.lua_unet.get(1).get(1).get(2).get(1).get(2)
+        # del first_concat.modules[0]
+        #
+        # yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
+        # yTorch_rgb = yTorch_rgb[0]
 
-        yTorch_rgb, yTorch_d = lua_unet_pool.forward((yTorch_rgb, yTorch_d))
+        concat = self.lua_unet.get(1).get(1).get(2).get(1)
 
-        lua_unet_128 = self.lua_unet.get(1).get(1).get(2).get(1).get(1)
-
-        yTorch_rgb, yTorch_d = lua_unet_128.forward((yTorch_rgb, yTorch_d))
-
-        first_concat = self.lua_unet.get(1).get(1).get(2).get(1).get(2)
-        del first_concat.modules[0]
-
-        yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
-        yTorch_rgb = yTorch_rgb[0]
-
-
+        yTorch_rgb = concat.forward((yTorch_rgb, yTorch_d))
 
 
         # print(yTorch_out)
@@ -557,7 +564,6 @@ class UNetRGBD(nn.Module):
 
         out = self.up(out)
 
-        '''
 
         out = torch.cat([out_rgb_relu128, out_d_relu128, out], dim=1)
         out = self.conv_512_256_n(out)
@@ -569,6 +575,8 @@ class UNetRGBD(nn.Module):
         out = self.relu256_128(out)
 
         out = self.up(out)
+
+        '''
 
         out = torch.cat([out_rgb_relu64, out_d_relu64, out], dim=1)
         out = self.conv_256_128_n(out)
