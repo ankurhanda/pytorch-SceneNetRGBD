@@ -410,8 +410,8 @@ class UNetRGBD(nn.Module):
         del concat.modules[5]
         del concat.modules[4]
 
-        del concat.modules[2].modules[0]
-        del concat.modules[3]
+        # del concat.modules[2].modules[0]
+        # del concat.modules[3]
 
         print(concat)
 
