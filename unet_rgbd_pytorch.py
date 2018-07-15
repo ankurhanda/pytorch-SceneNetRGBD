@@ -293,16 +293,15 @@ class UNetRGBD(nn.Module):
         self.copy_bn_layer(self.bn_512_256, self.sixth_block.get(4))
 
 
-        
+
         self.seventh_block = self.lua_unet.get(1).get(1).get(2).get(1).get(5)
 
-        self.copy_conv_layer(self.conv_512_256, self.seventh_block.get(0))
-        self.copy_bn_layer(self.bn_512_256, self.seventh_block.get(1))
+        self.copy_conv_layer(self.conv_512_256_n, self.seventh_block.get(0))
+        self.copy_bn_layer(self.bn_512_256_n, self.seventh_block.get(1))
         self.copy_conv_layer(self.conv_256_128, self.seventh_block.get(3))
         self.copy_bn_layer(self.bn_256_128, self.seventh_block.get(4))
 
         '''
-
         self.eigth_block = self.lua_unet.get(1).get(1).get(5)
 
         self.copy_conv_layer(self.conv_256_128_n, self.eigth_block.get(0))
@@ -396,13 +395,15 @@ class UNetRGBD(nn.Module):
 
         first_concat = self.lua_unet.get(1).get(1).get(2).get(1).get(2)
         del first_concat.modules[0]
-        del first_concat.modules[0].modules[3]
-        del first_concat.modules[0].modules[3]
+        # del first_concat.modules[0].modules[3]
+        # del first_concat.modules[0].modules[3]
 
         yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
         yTorch_rgb = yTorch_rgb[0]
 
         print(first_concat)
+
+
 
         # concat = self.lua_unet.get(1).get(1).get(2).get(1)
 
@@ -575,7 +576,7 @@ class UNetRGBD(nn.Module):
         out = self.conv1024_512(out)
         out = self.up(out)
 
-        '''
+
         out = self.conv_512_512(out)
         out = self.bn_512_512(out)
         out = self.relu512_512(out)
@@ -585,7 +586,7 @@ class UNetRGBD(nn.Module):
         out = self.relu512_256(out)
 
         out = self.up(out)
-        '''
+        
 
 
 
