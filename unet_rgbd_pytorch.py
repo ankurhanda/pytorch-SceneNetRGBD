@@ -342,10 +342,10 @@ class UNetRGBD(nn.Module):
 
         # Batch should be in NCHW format
         # input = np.ones((1, 3, 128, 128))
-        input_rgb = np.ones((1, 3, 128, 128))
+        input_rgb = np.ones((1, 3, 32, 32))
         myrgbImg = torch.tensor(input_rgb, dtype=torch.float32)
 
-        input_d = np.ones((1, 1, 128, 128))
+        input_d = np.ones((1, 1, 32, 32))
         mydImg = torch.tensor(input_d, dtype=torch.float32)
 
         # yTorch = self.lua_unet.forward((myrgbImg, mydImg))
