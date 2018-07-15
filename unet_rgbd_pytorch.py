@@ -523,7 +523,7 @@ class UNetRGBD(nn.Module):
         out_d = self.relu_d_3_32(out_d)
         out_d = self.conv_d_32_32(out_d)
         out_d = self.bn_d_32_32(out_d)
-        out_d_relu32 = self.relu_d_32_32(out_d)
+        out_d_relu32 = self.relu(out_d)
 
         out_d = self.pool(out_d_relu32)
 
@@ -534,7 +534,7 @@ class UNetRGBD(nn.Module):
         out_d = self.relu_d_32_64(out_d)
         out_d = self.conv_d_64_64(out_d)
         out_d = self.bn_d_64_64(out_d)
-        out_d_relu64 = self.relu_d_64_64(out_d)
+        out_d_relu64 = self.relu(out_d)
 
         out_d = self.pool(out_d_relu64)
 
@@ -545,7 +545,7 @@ class UNetRGBD(nn.Module):
         out_d = self.relu_d_64_128(out_d)
         out_d = self.conv_d_128_128(out_d)
         out_d = self.bn_d_128_128(out_d)
-        out_d_relu128 = self.relu_d_128_128(out_d)
+        out_d_relu128 = self.relu(out_d)
 
         out_d = self.pool(out_d_relu128)
 
@@ -557,7 +557,7 @@ class UNetRGBD(nn.Module):
         out_d = self.relu_d_128_256(out_d)
         out_d = self.conv_d_256_256(out_d)
         out_d = self.bn_d_256_256(out_d)
-        out_d_relu256 = self.relu_d_256_256(out_d)
+        out_d_relu256 = self.relu(out_d)
 
         out_d = out_d_relu256
 
@@ -574,11 +574,11 @@ class UNetRGBD(nn.Module):
 
         out = self.conv_512_512(out)
         out = self.bn_512_512(out)
-        out = self.relu512_512(out)
+        out = self.relu(out)
 
         out = self.conv_512_256(out)
         out = self.bn_512_256(out)
-        out = self.relu512_256(out)
+        out = self.relu(out)
 
         out = self.up(out)
         
@@ -586,11 +586,11 @@ class UNetRGBD(nn.Module):
         out = torch.cat([out_rgb_relu128, out_d_relu128, out], dim=1)
         out = self.conv_512_256_n(out)
         out = self.bn_512_256_n(out)
-        out = self.relu512_256_n(out)
+        out = self.relu(out)
 
         out = self.conv_256_128(out)
         out = self.bn_256_128(out)
-        out = self.relu256_128(out)
+        out = self.relu(out)
 
         out = self.up(out)
 
@@ -598,22 +598,22 @@ class UNetRGBD(nn.Module):
         out = torch.cat([out_rgb_relu64, out_d_relu64, out], dim=1)
         out = self.conv_256_128_n(out)
         out = self.bn_256_128_n(out)
-        out = self.relu256_128_n(out)
+        out = self.relu(out)
 
         out = self.conv_128_64(out)
         out = self.bn_128_64(out)
-        out = self.relu128_64(out)
+        out = self.relu(out)
 
         out = self.up(out)
 
         out = torch.cat([out_rgb_relu32, out_d_relu32, out], dim=1)
         out = self.conv_128_64_n(out)
         out = self.bn_128_64_n(out)
-        out = self.relu128_64_n(out)
+        out = self.relu(out)
 
         out = self.conv_64_64(out)
         out = self.bn_64_64(out)
-        out = self.relu64_64(out)
+        out = self.relu(out)
 
         out = self.conv_out_64(out)
 
