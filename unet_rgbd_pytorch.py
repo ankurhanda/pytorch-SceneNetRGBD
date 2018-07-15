@@ -129,6 +129,12 @@ class UNetRGBD(nn.Module):
 
         self.relu_d_256_256 = nn.ReLU(inplace=True)
 
+
+        self.conv512_1024 = nn.Conv2d(512, 1024, 3, 1, 1)
+        self.conv1024_512 = nn.Conv2d(1024, 512, 3, 1, 1)
+        self.up = nn.Upsample(scale_factor=2, mode='nearest')
+
+
         '''
         self.conv64_128 = nn.Conv2d(64, 128, 3, 1, 1)
         self.bn64_128 = nn.BatchNorm2d(128, track_running_stats=True)
@@ -336,6 +342,30 @@ class UNetRGBD(nn.Module):
         self.copy_bn_layer(self.bn_d_256_256, self.fourth_d_block.get(4))
 
 
+        self.fifth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(2)
+        self.copy_conv_layer(self.conv512_1024, self.fourth_d_block.get(2))
+        self.copy_conv_layer(self.conv1024_512, self.fourth_d_block.get(3))
+
+
+        self.make_everything_identity()
+
+
+        print(self.lua_unet)
+
+        # self.sixth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(3)
+        #
+        #
+        # self.seventh_block = self.lua_unet.get(1).get(1).get(2).get(1).get(5)
+        #
+        #
+        # self.eigth_block = self.lua_unet.get(1).get(1).get(5)
+        #
+        #
+        # self.ninth_block = self.lua_unet.get(4)
+        #
+        #
+        # self.tenth_block = self.lua_unet.get(5)
+
 
         '''
         self.third_block = self.lua_unet.get(1).get(1).get(2).get(1).get(1)
@@ -401,6 +431,27 @@ class UNetRGBD(nn.Module):
 
         print('Have copied the weights of the first block')
 
+
+    def make_everything_identity(self):
+
+        self.lua_unet.modules[1].modules[1].modules[2].modules[1].modules[2].modules[1].modules[3] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[1].modules[1].modules[2].modules[1].modules[2].modules[1].modules[4] = torch.legacy.nn.Identity()
+
+        self.lua_unet.modules[1].modules[1].modules[2].modules[1].modules[5] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[1].modules[1].modules[2].modules[1].modules[3] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[1].modules[1].modules[2].modules[1].modules[4] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[1].modules[1].modules[2].modules[1].modules[6] = torch.legacy.nn.Identity()
+
+        self.lua_unet.modules[1].modules[1].modules[5] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[1].modules[1].modules[3] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[1].modules[1].modules[4] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[1].modules[1].modules[6] = torch.legacy.nn.Identity()
+
+        self.lua_unet.modules[2] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[3] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[4] = torch.legacy.nn.Identity()
+        self.lua_unet.modules[5] = torch.legacy.nn.Identity()
+
     def run_torch_pytorch_import_test(self):
 
         # Batch should be in NCHW format
@@ -413,23 +464,24 @@ class UNetRGBD(nn.Module):
 
         # yTorch = self.lua_unet.forward((myrgbImg, mydImg))
 
-        yTorch_rgb32, yTorch_d32 = self.first_block.forward((myrgbImg, mydImg))
-        yTorch_rgb32 = self.pool(yTorch_rgb32)
-        yTorch_d32   = self.pool(yTorch_d32)
+        # yTorch_rgb32, yTorch_d32 = self.first_block.forward((myrgbImg, mydImg))
+        # yTorch_rgb32 = self.pool(yTorch_rgb32)
+        # yTorch_d32   = self.pool(yTorch_d32)
+        #
+        # yTorch_rgb64, yTorch_d64 = self.second_block.forward((yTorch_rgb32, yTorch_d32))
+        # yTorch_rgb64 = self.pool(yTorch_rgb64)
+        # yTorch_d64 = self.pool(yTorch_d64)
+        #
+        # yTorch_rgb128, yTorch_d128 = self.third_block.forward((yTorch_rgb64, yTorch_d64))
+        # yTorch_rgb128 = self.pool(yTorch_rgb128)
+        # yTorch_d128 = self.pool(yTorch_d128)
+        #
+        # yTorch_rgb256, yTorch_d256 = self.fourth_block.forward((yTorch_rgb128, yTorch_d128))
+        # yTorch_rgb256 = self.pool(yTorch_rgb256)
+        # yTorch_d256 = self.pool(yTorch_d256)
 
-        yTorch_rgb64, yTorch_d64 = self.second_block.forward((yTorch_rgb32, yTorch_d32))
-        yTorch_rgb64 = self.pool(yTorch_rgb64)
-        yTorch_d64 = self.pool(yTorch_d64)
 
-        yTorch_rgb128, yTorch_d128 = self.third_block.forward((yTorch_rgb64, yTorch_d64))
-        yTorch_rgb128 = self.pool(yTorch_rgb128)
-        yTorch_d128 = self.pool(yTorch_d128)
-
-        yTorch_rgb256, yTorch_d256 = self.fourth_block.forward((yTorch_rgb128, yTorch_d128))
-        yTorch_rgb256 = self.pool(yTorch_rgb256)
-        yTorch_d256 = self.pool(yTorch_d256)
-
-
+        yTorch_out = self.lua_unet.forward((myrgbImg, mydImg))
 
 
         # yTorch = self.pool_64(yTorch64)
@@ -457,15 +509,16 @@ class UNetRGBD(nn.Module):
         #
         # yTorch = self.tenth_block.forward(yTorch)
 
-        print('yTorch shape = ', yTorch_rgb256.detach().numpy().shape)
+        print('yTorch shape = ', yTorch_out.detach().numpy().shape)
 
-        ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
+        # ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
+        ypyTorch_out = self.forward((myrgbImg, mydImg))
 
-        print('ypTorch_rgb shape = ', ypyTorch_rgb.detach().numpy().shape)
-        print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
+        # print('ypTorch_rgb shape = ', ypyTorch_rgb.detach().numpy().shape)
+        # print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
 
-        print('DIFF {}'.format(np.sum(yTorch_rgb256.detach().numpy() - ypyTorch_rgb.detach().numpy())))
-        print('DIFF {}'.format(np.sum(yTorch_d256.detach().numpy() - ypyTorch_d.detach().numpy())))
+        print('DIFF {}'.format(np.sum(yTorch_out.detach().numpy() - ypyTorch_out.detach().numpy())))
+        # print('DIFF {}'.format(np.sum(yTorch_d256.detach().numpy() - ypyTorch_d.detach().numpy())))
 
     def forward(self, x):
 
@@ -514,7 +567,7 @@ class UNetRGBD(nn.Module):
         out_rgb = self.bn_rgb_256_256(out_rgb)
         out_rgb_relu256 = self.relu_rgb_256_256(out_rgb)
 
-        out_rgb = self.pool(out_rgb_relu256)
+        out_rgb = out_rgb_relu256
 
 
 
@@ -563,7 +616,28 @@ class UNetRGBD(nn.Module):
         out_d = self.bn_d_256_256(out_d)
         out_d_relu256 = self.relu_d_256_256(out_d)
 
-        out_d = self.pool(out_d_relu256)
+        out_d = out_d_relu256
+
+
+
+        out = torch.cat([out_rgb, out_d], dim=1)
+
+        out = self.pool(out)
+        out = self.conv512_1024(out)
+        out = self.conv1024_512(out)
+        out = self.up(out)
+
+        # out = self.conv_512_512(out)
+        # out = self.bn_512_512(out)
+        # out = self.relu_512_512(out)
+        #
+        # out = self.conv_512_256(out)
+        # out = self.bn_512_256(out)
+        # out = self.relu_512_256(out)
+        #
+        # out = self.up256(out)
+
+
 
         '''
         out = self.conv64_128(out)
@@ -634,4 +708,4 @@ class UNetRGBD(nn.Module):
         out = self.conv_out_64(out)
         '''
 
-        return (out_rgb, out_d)
+        return out #(out_rgb, out_d)
