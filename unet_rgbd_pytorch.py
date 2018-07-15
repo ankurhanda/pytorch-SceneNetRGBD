@@ -281,7 +281,7 @@ class UNetRGBD(nn.Module):
         self.copy_conv_layer(self.conv1024_512, self.fifth_block.get(3))
 
 
-        '''
+
         self.sixth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(3)
 
         self.copy_conv_layer(self.conv_512_512, self.sixth_block.get(0))
@@ -289,6 +289,8 @@ class UNetRGBD(nn.Module):
         self.copy_conv_layer(self.conv_512_256, self.sixth_block.get(3))
         self.copy_bn_layer(self.bn_512_256, self.sixth_block.get(4))
 
+        '''
+        
         self.seventh_block = self.lua_unet.get(1).get(1).get(2).get(1).get(5)
 
         self.copy_conv_layer(self.conv_512_256, self.seventh_block.get(0))
