@@ -342,10 +342,10 @@ class UNetRGBD(nn.Module):
 
         # Batch should be in NCHW format
         # input = np.ones((1, 3, 128, 128))
-        input_rgb = np.ones((1, 3, 32, 32))
+        input_rgb = np.ones((1, 3, 64, 64))
         myrgbImg = torch.tensor(input_rgb, dtype=torch.float32)
 
-        input_d = np.ones((1, 1, 32, 32))
+        input_d = np.ones((1, 1, 64, 64))
         mydImg = torch.tensor(input_d, dtype=torch.float32)
 
         # yTorch = self.lua_unet.forward((myrgbImg, mydImg))
@@ -387,10 +387,11 @@ class UNetRGBD(nn.Module):
 
         yTorch_rgb, yTorch_d = lua_unet_128.forward((yTorch_rgb, yTorch_d))
 
+        first_concat = self.lua_unet.get(1).get(1).get(2).get(1).get(2)
+        del first_concat.modules[0]
 
+        yTorch_rgb = first_concat.forward((yTorch_rgb, yTorch_d))
 
-        # concat = lua_unet.get(1).get(1).get(2).get(1).get(2)
-        # del concat.modules[0]
 
 
 
@@ -426,13 +427,13 @@ class UNetRGBD(nn.Module):
         # # print('yTorch shape = ', np.array(yTorch_out).shape)
         #
         # # ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
-        ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
+        ypyTorch_rgb = self.forward((myrgbImg, mydImg))
 
         print('ypTorch_rgb shape = ', ypyTorch_rgb.detach().numpy().shape)
-        print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
+        # print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
 
         print('DIFF {}'.format(np.sum(yTorch_rgb.detach().numpy() - ypyTorch_rgb.detach().numpy())))
-        print('DIFF {}'.format(np.sum(yTorch_d.detach().numpy() - ypyTorch_d.detach().numpy())))
+        # print('DIFF {}'.format(np.sum(yTorch_d.detach().numpy() - ypyTorch_d.detach().numpy())))
 
     def forward(self, x):
 
@@ -588,4 +589,4 @@ class UNetRGBD(nn.Module):
         out = self.conv_out_64(out)
         '''
 
-        return (out_rgb_relu128, out_d_relu128)
+        return out
