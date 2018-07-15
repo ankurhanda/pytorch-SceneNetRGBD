@@ -144,8 +144,6 @@ class UNetRGBD(nn.Module):
         self.bn_512_256.training = False
         self.relu512_256 = nn.ReLU(inplace=True)
 
-
-
         self.conv_512_256_n = nn.Conv2d(512, 256, 3, 1, 1)
         self.bn_512_256_n = nn.BatchNorm2d(256, track_running_stats=True)
         self.bn_512_256_n.training = False
@@ -155,7 +153,6 @@ class UNetRGBD(nn.Module):
         self.bn_256_128 = nn.BatchNorm2d(128, track_running_stats=True)
         self.bn_256_128.training = False
         self.relu256_128 = nn.ReLU(inplace=True)
-
 
         self.conv_256_128_n = nn.Conv2d(256, 128, 3, 1, 1)
         self.bn_256_128_n = nn.BatchNorm2d(128, track_running_stats=True)
@@ -284,6 +281,7 @@ class UNetRGBD(nn.Module):
         self.copy_conv_layer(self.conv1024_512, self.fifth_block.get(3))
 
 
+        '''
         self.sixth_block = self.lua_unet.get(1).get(1).get(2).get(1).get(2).get(1).get(3)
 
         self.copy_conv_layer(self.conv_512_512, self.sixth_block.get(0))
@@ -315,6 +313,7 @@ class UNetRGBD(nn.Module):
 
         self.tenth_block = self.lua_unet.get(5)
         self.copy_conv_layer(self.conv_out_64, self.tenth_block)
+        '''
 
         print('Have copied the weights of the first block')
 
@@ -343,10 +342,10 @@ class UNetRGBD(nn.Module):
 
         # Batch should be in NCHW format
         # input = np.ones((1, 3, 128, 128))
-        input_rgb = np.random.rand(1, 3, 128, 128)
+        input_rgb = np.ones((1, 3, 128, 128))
         myrgbImg = torch.tensor(input_rgb, dtype=torch.float32)
 
-        input_d = np.random.rand(1, 1, 128, 128)
+        input_d = np.ones((1, 1, 128, 128))
         mydImg = torch.tensor(input_d, dtype=torch.float32)
 
         # yTorch = self.lua_unet.forward((myrgbImg, mydImg))
@@ -397,17 +396,21 @@ class UNetRGBD(nn.Module):
         #
         # yTorch = self.tenth_block.forward(yTorch)
 
-        print('yTorch shape = ', yTorch_out.detach().numpy().shape)
-        # print('yTorch shape = ', np.array(yTorch_out).shape)
 
-        # ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
+        # print('yTorch shape = ', yTorch_out.detach().numpy().shape)
+        # # print('yTorch shape = ', np.array(yTorch_out).shape)
+        #
+        # # ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
         ypyTorch_out = self.forward((myrgbImg, mydImg))
 
-        print('ypTorch_rgb shape = ', ypyTorch_out.detach().numpy().shape)
-        # print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
+        print('ypyTorch_out = ', ypyTorch_out)
 
-        print('DIFF {}'.format(np.sum(yTorch_out.detach().numpy() - ypyTorch_out.detach().numpy())))
-        # print('DIFF {}'.format(np.sum(yTorch_d256.detach().numpy() - ypyTorch_d.detach().numpy())))
+
+        # print('ypTorch_rgb shape = ', ypyTorch_out.detach().numpy().shape)
+        # # print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
+        #
+        # print('DIFF {}'.format(np.sum(yTorch_out.detach().numpy() - ypyTorch_out.detach().numpy())))
+        # # print('DIFF {}'.format(np.sum(yTorch_d256.detach().numpy() - ypyTorch_d.detach().numpy())))
 
     def forward(self, x):
 
@@ -508,6 +511,7 @@ class UNetRGBD(nn.Module):
         out_d = out_d_relu256
 
 
+        ''' RGBD '''
 
         out = torch.cat([out_rgb, out_d], dim=1)
 
@@ -516,7 +520,7 @@ class UNetRGBD(nn.Module):
         out = self.conv1024_512(out)
         out = self.up(out)
 
-
+        '''
         out = self.conv_512_512(out)
         out = self.bn_512_512(out)
         out = self.relu512_512(out)
@@ -560,5 +564,6 @@ class UNetRGBD(nn.Module):
         out = self.relu64_64(out)
 
         out = self.conv_out_64(out)
+        '''
 
         return out
