@@ -412,6 +412,11 @@ class UNetRGBD(nn.Module):
 
         yTorch_rgb_128, yTorch_d128, yTorch_rgb = concat.forward((yTorch_rgb, yTorch_d))
 
+        print('yTorch_rgb_128 = ', yTorch_rgb_128)
+
+        print('yTorch_d_128 = ', yTorch_d128)
+
+        print('yOut = ', yTorch_rgb)
 
         # print(yTorch_out)
 
@@ -446,6 +451,8 @@ class UNetRGBD(nn.Module):
         #
         # # ypyTorch_rgb, ypyTorch_d = self.forward((myrgbImg, mydImg))
         ypyTorch_rgb = self.forward((myrgbImg, mydImg))
+
+        print('ypyTorch_rgb = ', ypyTorch_rgb)
 
         print('ypTorch_rgb shape = ', ypyTorch_rgb.detach().numpy().shape)
         # print('ypTorch_depth shape = ', ypyTorch_d.detach().numpy().shape)
