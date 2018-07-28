@@ -6,4 +6,6 @@
 
 # Important things to keep in mind before using the code
 
+* Download the pytorch models from the [google drive link](https://drive.google.com/open?id=1cv95981C8vJ9YZY4QowcqcaU1hW2lj1W)
+
 # Updates 
