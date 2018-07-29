@@ -6,7 +6,7 @@
 
 # Important things to keep in mind before using the code
 
-* Download the pytorch models from the [google drive link](https://drive.google.com/open?id=1cv95981C8vJ9YZY4QowcqcaU1hW2lj1W)
+* Download the pytorch models from the [google drive link](https://drive.google.com/open?id=1cv95981C8vJ9YZY4QowcqcaU1hW2lj1W). It is 5.8 GBs in total in size.
 
 * This code was converted from the torch implementation used in the paper. The image reader in torch is different from tthe pytorch version and therefore we provide the rgb and depth files convereted from torch in `npy` format. 
 
