@@ -12,7 +12,7 @@
 
 * This code was converted from the torch implementation used in the paper. The image reader in torch is different from tthe pytorch version and therefore we provide the rgb and depth files convereted from torch in `npy` format. 
 
-* The depth scaling used for `NYUv2` was `1/1000` and `SUN RGB-D` was `1/10000`. This means that if you are using the `NYUv2` model that was pre-trained on SceneNet RGB-D (not RGB) and fine-tuned on `NYUv2` dataset then you should scale down the depth values by a factor of 1000 and 10000 for SUN RGB-D.
+* The depth scaling used for `NYUv2` was `1/1000` and `SUN RGB-D` was `1/10000`. This means that if you are using the `NYUv2` pretrained SceneNet RGB-D model that was fine-tuned on `NYUv2` dataset then you should scale down the depth values by a factor of 1000 before using it for any new future experiments and 10000 for SUN RGB-D.
 
 * To obtain the numbers in the paper for 13 class segmentations do `python test_models.py`
 
