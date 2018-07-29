@@ -8,8 +8,12 @@
 
 * Download the pytorch models from the [google drive link](https://drive.google.com/open?id=1cv95981C8vJ9YZY4QowcqcaU1hW2lj1W)
 
-* To obtain the numbers in the paper for 13 class segmentations do
+* This code was converted from the torch implementation used in the paper. The image reader in torch is different from tthe pytorch version and therefore we provide the rgb and depth files convereted from torch in `npy` format. 
 
-`python test_models.py`
+* The depth scaling used for `NYUv2` was `1/100` and `SUN RGB-D` was `1/1000`.
+
+* To obtain the numbers in the paper for 13 class segmentations do `python test_models.py`
 
 # Updates 
+
+* Any future updates will be posted here.
