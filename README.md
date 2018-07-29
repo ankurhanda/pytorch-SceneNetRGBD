@@ -8,4 +8,8 @@
 
 * Download the pytorch models from the [google drive link](https://drive.google.com/open?id=1cv95981C8vJ9YZY4QowcqcaU1hW2lj1W)
 
+* To obtain the numbers in the paper for 13 class segmentations do
+
+`python test_models.py`
+
 # Updates 
