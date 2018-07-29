@@ -1,8 +1,8 @@
 # What does this repository contain
 
-* This repository contains the weights of UNet models trained on RGB as well as RGB-D data of SceneNet RGB-D dataset.
+* This repository contains the weights of UNet models trained on RGB as well as RGB-D data of [SceneNet RGB-D dataset](https://robotvault.bitbucket.io/scenenet-rgbd.html).
 * It has code to reproduce the UNet used in the paper and also provides segmentation evaluation scripts.
-* The `test_models.py` contains the code to reproduce the numbers as obtained in the ICCV 2017 paper.
+* The `test_models.py` contains the code to reproduce the numbers as obtained in the [ICCV 2017 paper](http://www.imperial.ac.uk/media/imperial-college/research-centres-and-groups/dyson-robotics-lab/jmccormac_etal_iccv2017.pdf).
 
 # Important things to keep in mind before using the code
 
