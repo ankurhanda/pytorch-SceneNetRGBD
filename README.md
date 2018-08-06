@@ -16,7 +16,7 @@
 
 * To obtain the numbers in the paper for 13 class segmentations do `python test_models.py`
 
-* If you would like to get the filtered dataset with labels greater than 3 per image it is here at [google drive link](https://drive.google.com/open?id=1HTv6d4F6QtNn28nS55bLqRoUXrcDJS5B)
+* If you would like to get the filtered dataset with labels greater than 3 per image it is here at [google drive link](https://drive.google.com/open?id=1HTv6d4F6QtNn28nS55bLqRoUXrcDJS5B). It contains the names of the files not the pngs and is 23MB in size.
 
 # Updates 
 
