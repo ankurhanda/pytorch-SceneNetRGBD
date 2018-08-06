@@ -16,6 +16,8 @@
 
 * To obtain the numbers in the paper for 13 class segmentations do `python test_models.py`
 
+* If you would like to get the filtered dataset with labels greater than 3 per image it is here at [google drive link](https://drive.google.com/open?id=1HTv6d4F6QtNn28nS55bLqRoUXrcDJS5B)
+
 # Updates 
 
 * Any future updates will be posted here.
