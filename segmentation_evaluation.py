@@ -6,8 +6,9 @@ import os
 
 def evaluate(preds,gt):
     VOID_CLASS = 0
-    preds = preds[gt != VOID_CLASS]
-    gt    = gt[gt != VOID_CLASS]
+    mask_valid = (preds != VOID_CLASS) & (gt != VOID_CLASS)
+    preds = preds[mask_valid]
+    gt    = gt[mask_valid]
     # Must have all the required classes (no class skipping or subsets of gt)
     assert len(np.unique(gt)) == np.max(gt)
     conf_mat = confusion_matrix(gt,preds)
